@@ -23,19 +23,19 @@ export default function Footer() {
           {/* Company Info */}
           <div className="lg:col-span-1">
             <div className="flex items-center">
-              <img 
-                src="/images/autowais-logo-original.png" 
-                alt="AUTOWAIS - Your Complete Technology Solutions Partner" 
+              <img
+                src="/images/autowais-logo-original.png"
+                alt="AUTOWAIS - Your Complete Technology Solutions Partner"
                 className="h-10 w-auto"
-                
+
               />
             </div>
             <p className="mt-4 text-sm text-gray-300">
               Your Complete Technology Solutions Partner. We deliver custom development, process automation, and system integration solutions that drive real business growth.
             </p>
             <div className="mt-6 space-y-2 text-sm text-gray-300">
-              <p>contact@autowais.com</p>
-              <p>+1 (555) 123-4567</p>
+              <p>karl.hallis@autowais.com</p>
+              <p>+917498048831</p>
               <p>Global Remote Operations</p>
             </div>
           </div>
@@ -46,8 +46,8 @@ export default function Footer() {
             <ul className="mt-4 space-y-2">
               {navigation.main.map((item) => (
                 <li key={item.name}>
-                  <Link 
-                    href={item.href} 
+                  <Link
+                    href={item.href}
                     className="text-sm text-gray-300 hover:text-white transition-colors"
                   >
                     {item.name}
@@ -63,8 +63,8 @@ export default function Footer() {
             <ul className="mt-4 space-y-2">
               {navigation.services.map((item) => (
                 <li key={item.name}>
-                  <Link 
-                    href={item.href} 
+                  <Link
+                    href={item.href}
                     className="text-sm text-gray-300 hover:text-white transition-colors"
                   >
                     {item.name}
@@ -97,29 +97,29 @@ export default function Footer() {
             <h3 className="text-sm font-semibold text-white mb-4">Security & Compliance</h3>
             <div className="flex flex-wrap justify-center items-center gap-6 lg:gap-8">
               <div className="flex flex-col items-center group">
-                <img 
-                  src="/images/compliance/soc2-logo.png" 
-                  alt="SOC 2 Type II Compliant" 
+                <img
+                  src="/images/compliance/soc2-logo.png"
+                  alt="SOC 2 Type II Compliant"
                   className="h-12 w-auto group-hover:scale-110 transition-transform duration-200"
-                  
+
                 />
                 <span className="text-xs text-gray-400 mt-1">SOC 2 Type II</span>
               </div>
               <div className="flex flex-col items-center group">
-                <img 
-                  src="/images/compliance/gdpr-logo.png" 
-                  alt="GDPR Compliant" 
+                <img
+                  src="/images/compliance/gdpr-logo.png"
+                  alt="GDPR Compliant"
                   className="h-12 w-auto group-hover:scale-110 transition-transform duration-200"
-                  
+
                 />
                 <span className="text-xs text-gray-400 mt-1">GDPR Ready</span>
               </div>
               <div className="flex flex-col items-center group">
-                <img 
-                  src="/images/compliance/hipaa-logo.png" 
-                  alt="HIPAA Compliant" 
+                <img
+                  src="/images/compliance/hipaa-logo.png"
+                  alt="HIPAA Compliant"
                   className="h-12 w-auto group-hover:scale-110 transition-transform duration-200"
-                  
+
                 />
                 <span className="text-xs text-gray-400 mt-1">HIPAA Eligible</span>
               </div>
