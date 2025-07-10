@@ -1,8 +1,26 @@
-import Link from 'next/link';
 import { blogPosts, getAllCategories } from '@/data/blogPosts';
+import Image from 'next/image';
+import Link from 'next/link';
 
 export default function Blog() {
   const categories = getAllCategories();
+
+  const getCategoryEmoji = (category: string) => {
+    const emojiMap: { [key: string]: string } = {
+      'Artificial Intelligence': '🤖',
+      'Digital Transformation': '🚀',
+      'Cloud Computing': '☁️',
+      'Integration': '🔗',
+      'Cybersecurity': '🔒',
+      'Data Analytics': '📊',
+      'Mobile Development': '📱',
+      'Process Automation': '⚙️',
+      'E-commerce': '🛒',
+      'Remote Work': '💻'
+    };
+    return emojiMap[category] || '📄';
+  };
+
   return (
     <main className="pt-20 relative overflow-hidden">
       {/* Background Animation */}
@@ -21,7 +39,7 @@ export default function Blog() {
               <span className="gradient-text"> & Innovation</span>
             </h1>
             <p className="mt-6 text-lg leading-8 text-gray-600">
-              Stay ahead of the curve with expert insights on technology trends, best practices, 
+              Stay ahead of the curve with expert insights on technology trends, best practices,
               and innovation strategies that drive business transformation.
             </p>
           </div>
@@ -55,24 +73,27 @@ export default function Blog() {
               <article key={post.id} className="group">
                 <div className="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden transform hover:-translate-y-2 hover:scale-105">
                   {/* Blog Image */}
-                  <div className="aspect-video bg-gradient-to-br from-emerald-50 to-teal-100 relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/20 to-teal-500/20" />
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="text-emerald-600 text-6xl opacity-50">
-                        {post.category === 'Artificial Intelligence' && '🤖'}
-                        {post.category === 'Digital Transformation' && '🚀'}
-                        {post.category === 'Cloud Computing' && '☁️'}
-                        {post.category === 'Integration' && '🔗'}
-                        {post.category === 'Cybersecurity' && '🔒'}
-                        {post.category === 'Data Analytics' && '📊'}
-                        {post.category === 'Mobile Development' && '📱'}
-                        {post.category === 'Process Automation' && '⚙️'}
-                        {post.category === 'E-commerce' && '🛒'}
-                        {post.category === 'Remote Work' && '💻'}
+                  <div className="aspect-video relative overflow-hidden bg-gradient-to-br from-slate-900 to-slate-800">
+                    <Image
+                      src={post.image}
+                      alt={post.title}
+                      fill
+                      className="object-cover"
+                      onError={(e) => {
+                        // Fallback to emoji display if image fails to load
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                      }}
+                    />
+                    {/* Fallback emoji overlay (hidden when image loads) */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 to-teal-100 flex items-center justify-center">
+                      <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/20 to-teal-500/20" />
+                      <div className="text-emerald-600 text-6xl opacity-50 z-10">
+                        {getCategoryEmoji(post.category)}
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="p-6">
                     {/* Category and Read Time */}
                     <div className="flex items-center justify-between mb-3">
@@ -81,19 +102,19 @@ export default function Blog() {
                       </span>
                       <span className="text-sm text-gray-500">{post.readTime}</span>
                     </div>
-                    
+
                     {/* Title */}
                     <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-emerald-600 transition-colors">
                       <Link href={`/blog/${post.id}`}>
                         {post.title}
                       </Link>
                     </h3>
-                    
+
                     {/* Excerpt */}
                     <p className="text-gray-600 mb-4 line-clamp-3">
                       {post.excerpt}
                     </p>
-                    
+
                     {/* Author and Date */}
                     <div className="flex items-center justify-between">
                       <div className="flex items-center">
@@ -113,7 +134,7 @@ export default function Blog() {
                           </p>
                         </div>
                       </div>
-                      
+
                       <Link
                         href={`/blog/${post.id}`}
                         className="text-emerald-600 hover:text-emerald-700 font-medium text-sm transition-colors"

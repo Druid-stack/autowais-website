@@ -1,6 +1,7 @@
-import { notFound } from 'next/navigation';
+import { blogPosts, getPostBySlug } from '@/data/blogPosts';
+import Image from 'next/image';
 import Link from 'next/link';
-import { getPostBySlug, blogPosts } from '@/data/blogPosts';
+import { notFound } from 'next/navigation';
 
 interface BlogPostPageProps {
   params: Promise<{
@@ -21,6 +22,22 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   if (!post) {
     notFound();
   }
+
+  const getCategoryEmoji = (category: string) => {
+    const emojiMap: { [key: string]: string } = {
+      'Artificial Intelligence': '🤖',
+      'Digital Transformation': '🚀',
+      'Cloud Computing': '☁️',
+      'Integration': '🔗',
+      'Cybersecurity': '🔒',
+      'Data Analytics': '📊',
+      'Mobile Development': '📱',
+      'Process Automation': '⚙️',
+      'E-commerce': '🛒',
+      'Remote Work': '💻'
+    };
+    return emojiMap[category] || '📄';
+  };
 
   return (
     <main className="pt-20">
@@ -84,20 +101,22 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       <article className="py-16">
         <div className="mx-auto max-w-4xl px-6 lg:px-8">
           {/* Article Image */}
-          <div className="aspect-video bg-gradient-to-br from-emerald-50 to-teal-100 rounded-2xl mb-12 relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/20 to-teal-500/20" />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-emerald-600 text-8xl opacity-50">
-                {post.category === 'Artificial Intelligence' && '🤖'}
-                {post.category === 'Digital Transformation' && '🚀'}
-                {post.category === 'Cloud Computing' && '☁️'}
-                {post.category === 'Integration' && '🔗'}
-                {post.category === 'Cybersecurity' && '🔒'}
-                {post.category === 'Data Analytics' && '📊'}
-                {post.category === 'Mobile Development' && '📱'}
-                {post.category === 'Process Automation' && '⚙️'}
-                {post.category === 'E-commerce' && '🛒'}
-                {post.category === 'Remote Work' && '💻'}
+          <div className="aspect-video relative overflow-hidden rounded-2xl mb-12 bg-gradient-to-br from-slate-900 to-slate-800">
+            <Image
+              src={post.image}
+              alt={post.title}
+              fill
+              className="object-cover rounded-2xl"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.style.display = 'none';
+              }}
+            />
+            {/* Fallback emoji overlay */}
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 to-teal-100 rounded-2xl flex items-center justify-center">
+              <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 rounded-2xl" />
+              <div className="text-emerald-600 text-8xl opacity-50 z-10">
+                {getCategoryEmoji(post.category)}
               </div>
             </div>
           </div>
@@ -130,7 +149,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           <h2 className="text-3xl font-bold tracking-tight text-gray-900 mb-12 text-center">
             Related Articles
           </h2>
-          
+
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
             {blogPosts
               .filter(p => p.id !== post.id && p.category === post.category)
@@ -138,39 +157,41 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               .map(relatedPost => (
                 <article key={relatedPost.id} className="group">
                   <div className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-300 overflow-hidden">
-                    <div className="aspect-video bg-gradient-to-br from-emerald-50 to-teal-100 relative overflow-hidden">
-                      <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/20 to-teal-500/20" />
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="text-emerald-600 text-4xl opacity-50">
-                          {relatedPost.category === 'Artificial Intelligence' && '🤖'}
-                          {relatedPost.category === 'Digital Transformation' && '🚀'}
-                          {relatedPost.category === 'Cloud Computing' && '☁️'}
-                          {relatedPost.category === 'Integration' && '🔗'}
-                          {relatedPost.category === 'Cybersecurity' && '🔒'}
-                          {relatedPost.category === 'Data Analytics' && '📊'}
-                          {relatedPost.category === 'Mobile Development' && '📱'}
-                          {relatedPost.category === 'Process Automation' && '⚙️'}
-                          {relatedPost.category === 'E-commerce' && '🛒'}
-                          {relatedPost.category === 'Remote Work' && '💻'}
+                    <div className="aspect-video relative overflow-hidden bg-gradient-to-br from-slate-900 to-slate-800">
+                      <Image
+                        src={relatedPost.image}
+                        alt={relatedPost.title}
+                        fill
+                        className="object-cover"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                        }}
+                      />
+                      {/* Fallback emoji overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 to-teal-100 flex items-center justify-center">
+                        <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/20 to-teal-500/20" />
+                        <div className="text-emerald-600 text-4xl opacity-50 z-10">
+                          {getCategoryEmoji(relatedPost.category)}
                         </div>
                       </div>
                     </div>
-                    
+
                     <div className="p-6">
                       <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 mb-3">
                         {relatedPost.category}
                       </span>
-                      
+
                       <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-emerald-600 transition-colors">
                         <Link href={`/blog/${relatedPost.id}`}>
                           {relatedPost.title}
                         </Link>
                       </h3>
-                      
+
                       <p className="text-gray-600 text-sm mb-4 line-clamp-2">
                         {relatedPost.excerpt}
                       </p>
-                      
+
                       <div className="flex items-center justify-between">
                         <span className="text-xs text-gray-500">{relatedPost.readTime}</span>
                         <Link
