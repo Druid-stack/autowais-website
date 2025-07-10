@@ -33,16 +33,18 @@ const values = [
 
 export default function AboutPage() {
   return (
-    <div className="bg-white relative overflow-hidden">
+    <div className="bg-white relative overflow-hidden min-h-screen">
       {/* Background Animation */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-gradient-to-r from-blue-400/20 to-purple-400/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute top-3/4 right-1/4 w-96 h-96 bg-gradient-to-r from-emerald-400/20 to-teal-400/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
-        <div className="absolute top-1/2 left-1/2 w-80 h-80 bg-gradient-to-r from-indigo-400/20 to-cyan-400/20 rounded-full blur-3xl animate-pulse delay-2000"></div>
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-gradient-to-r from-blue-400/30 to-purple-400/30 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute top-3/4 right-1/4 w-96 h-96 bg-gradient-to-r from-emerald-400/30 to-teal-400/30 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 left-1/2 w-80 h-80 bg-gradient-to-r from-indigo-400/30 to-cyan-400/30 rounded-full blur-3xl animate-pulse delay-2000"></div>
+        <div className="absolute top-10 right-10 w-32 h-32 bg-gradient-to-r from-pink-400/20 to-rose-400/20 rounded-full blur-2xl animate-pulse delay-3000"></div>
+        <div className="absolute bottom-20 left-20 w-48 h-48 bg-gradient-to-r from-violet-400/20 to-indigo-400/20 rounded-full blur-2xl animate-pulse delay-4000"></div>
       </div>
 
       {/* Hero Section */}
-      <div className="relative isolate px-6 pt-14 lg:px-8">
+      <div className="relative isolate px-6 pt-8 lg:px-8 z-10">
         <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
           <div className="text-center">
             <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
@@ -58,7 +60,7 @@ export default function AboutPage() {
       </div>
 
       {/* Mission Section */}
-      <div id="mission" className="mx-auto max-w-7xl px-6 lg:px-8 py-24 sm:py-32">
+      <div id="mission" className="relative z-10 mx-auto max-w-7xl px-6 lg:px-8 py-24 sm:py-32">
         <div className="mx-auto max-w-2xl lg:mx-0">
           <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Our Mission</h2>
           <p className="mt-6 text-lg leading-8 text-gray-600">
@@ -74,7 +76,7 @@ export default function AboutPage() {
       </div>
 
       {/* Vision Section */}
-      <div id="vision" className="bg-gray-50 py-24 sm:py-32">
+      <div id="vision" className="relative z-10 bg-gray-50 py-24 sm:py-32">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl lg:mx-0">
             <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Our Vision</h2>
@@ -92,7 +94,7 @@ export default function AboutPage() {
       </div>
 
       {/* Team Section */}
-      <div className="py-24 sm:py-32">
+      <div className="relative z-10 py-24 sm:py-32">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl lg:mx-0">
             <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Our Expertise</h2>
@@ -111,7 +113,7 @@ export default function AboutPage() {
       </div>
 
       {/* Approach Section */}
-      <div id="approach" className="bg-gray-50 py-24 sm:py-32">
+      <div id="approach" className="relative z-10 bg-gray-50 py-24 sm:py-32">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl lg:text-center">
             <h2 className="text-base font-semibold leading-7 text-emerald-600">Our Approach</h2>
@@ -143,7 +145,7 @@ export default function AboutPage() {
       </div>
 
       {/* Why Choose Us */}
-      <div className="py-24 sm:py-32">
+      <div className="relative z-10 py-24 sm:py-32">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl lg:text-center">
             <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
@@ -183,7 +185,7 @@ export default function AboutPage() {
       </div>
 
       {/* Security & Compliance Section */}
-      <div className="py-16 bg-gradient-to-br from-gray-50 to-gray-100">
+      <div className="relative z-10 py-16 bg-gradient-to-br from-gray-50 to-gray-100">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl mb-4">
