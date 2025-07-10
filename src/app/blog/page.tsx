@@ -79,11 +79,6 @@ export default function Blog() {
                       alt={post.title}
                       fill
                       className="object-cover"
-                      onError={(e) => {
-                        // Fallback to emoji display if image fails to load
-                        const target = e.target as HTMLImageElement;
-                        target.style.display = 'none';
-                      }}
                     />
                     {/* Fallback emoji overlay (hidden when image loads) */}
                     <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 to-teal-100 flex items-center justify-center">

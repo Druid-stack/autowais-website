@@ -107,10 +107,6 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               alt={post.title}
               fill
               className="object-cover rounded-2xl"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.style.display = 'none';
-              }}
             />
             {/* Fallback emoji overlay */}
             <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 to-teal-100 rounded-2xl flex items-center justify-center">
@@ -163,10 +159,6 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                         alt={relatedPost.title}
                         fill
                         className="object-cover"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                        }}
                       />
                       {/* Fallback emoji overlay */}
                       <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 to-teal-100 flex items-center justify-center">
