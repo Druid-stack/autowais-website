@@ -1,2 +1,11 @@
 .vercel
 node_modules/
+
+# Build outputs
+/.next/
+/out/
+
+# OS
+.DS_Store
+*.DS_Store
+**/.DS_Store
