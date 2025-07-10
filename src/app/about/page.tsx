@@ -33,27 +33,19 @@ const values = [
 
 export default function AboutPage() {
   return (
-    <div className="relative overflow-hidden min-h-screen bg-gradient-to-br from-blue-50 via-white to-emerald-50">
+    <main className="pt-20 relative overflow-hidden">
       {/* Background Animation */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-gradient-to-r from-blue-500/40 to-purple-500/40 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute top-3/4 right-1/4 w-96 h-96 bg-gradient-to-r from-emerald-500/40 to-teal-500/40 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute top-1/2 left-1/2 w-80 h-80 bg-gradient-to-r from-indigo-500/40 to-cyan-500/40 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute top-10 right-10 w-32 h-32 bg-gradient-to-r from-pink-500/30 to-rose-500/30 rounded-full blur-2xl animate-pulse"></div>
-        <div className="absolute bottom-20 left-20 w-48 h-48 bg-gradient-to-r from-violet-500/30 to-indigo-500/30 rounded-full blur-2xl animate-pulse"></div>
-        
-        {/* Additional animated elements */}
-        <div className="absolute top-0 left-0 w-full h-full">
-          <div className="absolute top-20 left-1/3 w-24 h-24 bg-emerald-400/20 rounded-full blur-xl animate-bounce"></div>
-          <div className="absolute bottom-40 right-1/3 w-36 h-36 bg-blue-400/20 rounded-full blur-xl animate-bounce delay-1000"></div>
-        </div>
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-gradient-to-r from-emerald-400/20 to-teal-400/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute top-3/4 right-1/4 w-96 h-96 bg-gradient-to-r from-emerald-400/20 to-teal-400/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 left-1/2 w-80 h-80 bg-gradient-to-r from-emerald-500/20 to-green-500/20 rounded-full blur-3xl animate-pulse delay-2000"></div>
       </div>
 
       {/* Hero Section */}
-      <div className="relative isolate px-6 pt-8 lg:px-8 z-10">
-        <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
-          <div className="text-center">
-            <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
+      <section className="bg-gradient-to-br from-emerald-50 to-green-100 py-24 sm:py-32 relative">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="mx-auto max-w-4xl text-center">
+            <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
               Your Complete{' '}
               <span className="gradient-text">Technology Solutions</span> Partner
             </h1>
@@ -63,7 +55,7 @@ export default function AboutPage() {
             </p>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Mission Section */}
       <div id="mission" className="relative z-10 mx-auto max-w-7xl px-6 lg:px-8 py-24 sm:py-32">
@@ -165,7 +157,7 @@ export default function AboutPage() {
           
           <div className="mx-auto mt-16 max-w-7xl">
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-              <div className="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl p-8 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+              <div className="bg-gradient-to-br from-emerald-50 to-green-100 rounded-2xl p-8 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
                 <h3 className="text-xl font-semibold text-gray-900 mb-4">Results-Focused Approach</h3>
                 <p className="text-gray-600">
                   Every project starts with clear goals and measurable outcomes. We don't just build technology—we deliver business value.
@@ -179,7 +171,7 @@ export default function AboutPage() {
                 </p>
               </div>
 
-              <div className="bg-gradient-to-br from-purple-50 to-pink-100 rounded-2xl p-8 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+              <div className="bg-gradient-to-br from-teal-50 to-emerald-100 rounded-2xl p-8 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
                 <h3 className="text-xl font-semibold text-gray-900 mb-4">Long-Term Partnership</h3>
                 <p className="text-gray-600">
                   We build relationships, not just software. Our ongoing support ensures your technology grows with your business.
@@ -280,6 +272,6 @@ export default function AboutPage() {
           </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 } 
