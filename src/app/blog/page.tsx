@@ -5,22 +5,6 @@ import Link from 'next/link';
 export default function Blog() {
   const categories = getAllCategories();
 
-  const getCategoryEmoji = (category: string) => {
-    const emojiMap: { [key: string]: string } = {
-      'Artificial Intelligence': '🤖',
-      'Digital Transformation': '🚀',
-      'Cloud Computing': '☁️',
-      'Integration': '🔗',
-      'Cybersecurity': '🔒',
-      'Data Analytics': '📊',
-      'Mobile Development': '📱',
-      'Process Automation': '⚙️',
-      'E-commerce': '🛒',
-      'Remote Work': '💻'
-    };
-    return emojiMap[category] || '📄';
-  };
-
   return (
     <main className="pt-20 relative overflow-hidden">
       {/* Background Animation */}
@@ -78,15 +62,8 @@ export default function Blog() {
                       src={post.image}
                       alt={post.title}
                       fill
-                      className="object-cover"
+                      className="object-cover transition-transform duration-300 group-hover:scale-105"
                     />
-                    {/* Fallback emoji overlay (hidden when image loads) */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 to-teal-100 flex items-center justify-center">
-                      <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/20 to-teal-500/20" />
-                      <div className="text-emerald-600 text-6xl opacity-50 z-10">
-                        {getCategoryEmoji(post.category)}
-                      </div>
-                    </div>
                   </div>
 
                   <div className="p-6">
