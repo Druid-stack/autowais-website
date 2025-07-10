@@ -51,11 +51,6 @@ export default function AboutPage() {
 
       {/* Hero Section */}
       <div className="relative isolate px-6 pt-8 lg:px-8 z-10">
-        {/* TEST ANIMATION - Very obvious! */}
-        <div className="absolute top-4 right-4 w-16 h-16 bg-red-500 rounded-full animate-bounce z-50">
-          <div className="w-full h-full bg-yellow-400 rounded-full animate-pulse"></div>
-        </div>
-        
         <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
           <div className="text-center">
             <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
