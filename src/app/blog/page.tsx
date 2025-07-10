@@ -63,6 +63,7 @@ export default function Blog() {
                       alt={post.title}
                       fill
                       className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      priority={true}
                     />
                   </div>
 

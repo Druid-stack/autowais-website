@@ -107,14 +107,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               alt={post.title}
               fill
               className="object-cover rounded-2xl"
+              priority={true}
             />
-            {/* Fallback emoji overlay */}
-            <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 to-teal-100 rounded-2xl flex items-center justify-center">
-              <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 rounded-2xl" />
-              <div className="text-emerald-600 text-8xl opacity-50 z-10">
-                {getCategoryEmoji(post.category)}
-              </div>
-            </div>
           </div>
 
           {/* Content */}
@@ -160,13 +154,6 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                         fill
                         className="object-cover"
                       />
-                      {/* Fallback emoji overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 to-teal-100 flex items-center justify-center">
-                        <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/20 to-teal-500/20" />
-                        <div className="text-emerald-600 text-4xl opacity-50 z-10">
-                          {getCategoryEmoji(relatedPost.category)}
-                        </div>
-                      </div>
                     </div>
 
                     <div className="p-6">
