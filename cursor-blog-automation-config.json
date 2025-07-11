@@ -1,0 +1,82 @@
+{
+  "// Blog Automation Tool Configuration": "Optimized for daily LinkedIn content creation",
+  
+  "mcp.servers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["@modelcontextprotocol/server-filesystem", "/Users/prashdcruz/Documents/n8n%20Powerhouse/Power%20Plant"],
+      "env": {},
+      "priority": "high",
+      "enabled": true,
+      "description": "Essential for reading/writing workflow files and documentation"
+    },
+    "n8n-mcp": {
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "-e", "LOG_LEVEL=error", "-e", "DISABLE_CONSOLE_OUT=false", "-e", "N8N_API_URL=https://n8n.example.com", "-e", "N8N_API_KEY=eyJ1aHR0LXlziCIsImFsZyI6IkhTMjU2In0.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SyxI_NmQlI9eJGI2rGGJKgz6x", "ghcr.io/n8n-io/mcp:latest"],
+      "env": {},
+      "priority": "high", 
+      "enabled": true,
+      "description": "Core n8n workflow management for automation"
+    }
+  },
+  
+  "mcp.conditionalServers": {
+    "n8n-workflows": {
+      "command": "npx",
+      "args": ["mcp-remote", "https://gitmcp.io/zie619/n8n-workflows.git"],
+      "env": {},
+      "priority": "medium",
+      "enabled": "onDemand",
+      "activateWhen": ["workflow", "automation", "template"],
+      "description": "Template and example workflows - enable when needed"
+    },
+    "context7": {
+      "command": "npx", 
+      "args": ["mcp-remote", "https://gitmcp.io/upstash/context7.git"],
+      "env": {},
+      "priority": "low",
+      "enabled": false,
+      "description": "Disabled for blog project - enable for context7 work"
+    }
+  },
+  
+  "mcp.projectSettings": {
+    "blogAutomation": {
+      "maxActiveTools": 25,
+      "essentialTools": [
+        "mcp_n8n-mcp_list_nodes",
+        "mcp_n8n-mcp_get_node_info", 
+        "mcp_n8n-mcp_validate_workflow",
+        "mcp_n8n-mcp_n8n_create_workflow",
+        "read_file",
+        "edit_file",
+        "list_dir"
+      ],
+      "contextualTools": [
+        "mcp_n8n-mcp_search_nodes",
+        "mcp_n8n-mcp_get_templates_for_task",
+        "mcp_n8n-mcp_get_node_essentials"
+      ],
+      "disabledTools": [
+        "context7_tools",
+        "advanced_debugging_tools"
+      ]
+    }
+  },
+  
+  "mcp.performance": {
+    "lazyLoadTools": true,
+    "toolCaching": true,
+    "intelligentActivation": true,
+    "respectModelLimits": false,
+    "maxConcurrentCalls": 10
+  },
+  
+  "mcp.workflowOptimization": {
+    "blogCreation": {
+      "primaryTools": ["n8n-mcp", "filesystem"],
+      "supportTools": ["templates", "validation"],
+      "excludeTools": ["context7", "unrelated-docs"]
+    }
+  }
+} 

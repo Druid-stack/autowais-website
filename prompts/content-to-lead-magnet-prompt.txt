@@ -1,0 +1,3 @@
+Turn the following social media post into a checklist or quick guide that can be used as a lead magnet. Make it actionable and valuable.
+
+Content: {{ $json["content"] }} 
