@@ -45,4 +45,4 @@ echo "🔧 Running linter..."
 npm run lint
 
 echo "✅ Development environment setup complete!"
-echo "🎯 Run 'npm run dev' to start the development server" 
+echo "🎯 Run 'npm run dev' to start the development server"
