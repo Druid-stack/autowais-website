@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <svg width="120" height="80" viewBox="0 0 120 80" fill="none" xmlns="http://www.w3.org/2000/svg">
   <!-- Background -->
   <rect width="120" height="80" rx="8" fill="#065f46" stroke="#10b981" stroke-width="1"/>
@@ -16,3 +17,6 @@
   <!-- Compliant Text -->
   <text x="60" y="72" text-anchor="middle" fill="#d1fae5" font-family="Arial, sans-serif" font-size="9">COMPLIANT</text>
 </svg> 
+=======
+ 
+>>>>>>> 3c5c38f2493639acd0e7973e15d7f3d43efd1df1

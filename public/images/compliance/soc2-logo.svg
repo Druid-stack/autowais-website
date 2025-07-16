@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <svg width="120" height="80" viewBox="0 0 120 80" fill="none" xmlns="http://www.w3.org/2000/svg">
   <!-- Background -->
   <rect width="120" height="80" rx="8" fill="#1e3a8a" stroke="#3b82f6" stroke-width="1"/>
@@ -12,3 +13,6 @@
   <!-- Type II Text -->
   <text x="60" y="65" text-anchor="middle" fill="#e5e7eb" font-family="Arial, sans-serif" font-size="10">TYPE II COMPLIANT</text>
 </svg> 
+=======
+ 
+>>>>>>> 3c5c38f2493639acd0e7973e15d7f3d43efd1df1

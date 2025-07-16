@@ -1,42 +1,20 @@
 {
-  "name": "autowais",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "lint:fix": "next lint --fix",
-    "type-check": "tsc --noEmit",
-    "clean": "rm -rf .next",
-    "dev:clean": "npm run clean && npm run dev",
-    "analyze": "cross-env ANALYZE=true npm run build",
-    "export": "next build && next export"
-  },
-  "dependencies": {
-    "@types/node": "latest",
-    "@types/nodemailer": "^6.4.17",
-    "@types/react": "latest",
-    "@types/react-dom": "latest",
-    "autoprefixer": "latest",
-    "eslint": "latest",
-    "eslint-config-next": "latest",
-    "next": "latest",
-    "nodemailer": "^7.0.5",
-    "postcss": "latest",
-    "react": "latest",
-    "react-dom": "latest",
-    "tailwindcss": "^3.4.17",
-    "typescript": "latest"
-  },
-  "keywords": [
-    "autowais",
-    "ai",
-    "automation",
-    "saas"
-  ],
-  "author": "AUTOWAIS",
-  "license": "MIT",
-  "description": "AUTOWAIS - Intelligent Automation Solutions"
+    "name": "autowais-backend",
+    "version": "1.0.0",
+    "description": "AUTOWAIS Backend API with Authentication",
+    "main": "server.js",
+    "scripts": {
+        "start": "node server.js",
+        "dev": "nodemon server.js",
+        "setup": "node utils/setupAdmin.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [
+        "api",
+        "backend",
+        "autowais",
+        "authentication"
+    ],
+    "author": "AUTOWAIS",
+    "license": "ISC"
 }
