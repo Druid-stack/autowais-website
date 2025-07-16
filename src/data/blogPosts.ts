@@ -41,7 +41,7 @@ export const blogPosts: BlogPost[] = [
     readTime: "8 min read",
     category: "Artificial Intelligence",
     tags: ["AI", "Automation", "Technology", "Business Strategy"],
-    image: "/images/blog/ai-automation.png"
+    image: "/images/blog/ai-automation.svg"
   },
   {
     id: "digital-transformation-roadmap",
@@ -73,7 +73,7 @@ export const blogPosts: BlogPost[] = [
     readTime: "10 min read",
     category: "Digital Transformation",
     tags: ["Digital Transformation", "Strategy", "Technology", "Business"],
-    image: "/images/blog/digital-transformation.png"
+    image: "/images/blog/digital-transformation.svg"
   },
   {
     id: "cloud-migration-best-practices",
@@ -104,7 +104,7 @@ export const blogPosts: BlogPost[] = [
     readTime: "7 min read",
     category: "Cloud Computing",
     tags: ["Cloud", "Migration", "Infrastructure", "Security"],
-    image: "/images/blog/cloud-migration.png"
+    image: "/images/blog/cloud-migration.svg"
   },
   {
     id: "api-integration-guide",
@@ -139,7 +139,7 @@ export const blogPosts: BlogPost[] = [
     readTime: "9 min read",
     category: "Integration",
     tags: ["API", "Integration", "Development", "Architecture"],
-    image: "/images/blog/api-integration.png"
+    image: "/images/blog/api-integration.svg"
   },
   {
     id: "cybersecurity-small-business",
@@ -176,7 +176,7 @@ export const blogPosts: BlogPost[] = [
     readTime: "6 min read",
     category: "Cybersecurity",
     tags: ["Security", "Small Business", "Protection", "Risk Management"],
-    image: "/images/blog/cybersecurity.png"
+    image: "/images/blog/cybersecurity.svg"
   },
   {
     id: "data-analytics-business-intelligence",
@@ -213,7 +213,7 @@ export const blogPosts: BlogPost[] = [
     readTime: "8 min read",
     category: "Data Analytics",
     tags: ["Analytics", "Business Intelligence", "Data", "Decision Making"],
-    image: "/images/blog/data-analytics.png"
+    image: "/images/blog/data-analytics.svg"
   },
   {
     id: "mobile-app-development-trends",
@@ -252,7 +252,7 @@ export const blogPosts: BlogPost[] = [
     readTime: "7 min read",
     category: "Mobile Development",
     tags: ["Mobile", "App Development", "Trends", "Technology"],
-    image: "/images/blog/mobile-trends.png"
+    image: "/images/blog/mobile-trends.svg"
   },
   {
     id: "automation-workflow-optimization",
@@ -293,7 +293,7 @@ export const blogPosts: BlogPost[] = [
     readTime: "9 min read",
     category: "Process Automation",
     tags: ["Automation", "Workflow", "Efficiency", "Process Improvement"],
-    image: "/images/blog/workflow-automation.png"
+    image: "/images/blog/workflow-automation.svg"
   },
   {
     id: "ecommerce-technology-stack",
@@ -336,7 +336,7 @@ export const blogPosts: BlogPost[] = [
     readTime: "10 min read",
     category: "E-commerce",
     tags: ["E-commerce", "Technology Stack", "Web Development", "Online Business"],
-    image: "/images/blog/ecommerce-stack.png"
+    image: "/images/blog/ecommerce-stack.svg"
   },
   {
     id: "remote-work-technology-tools",
@@ -378,7 +378,7 @@ export const blogPosts: BlogPost[] = [
     readTime: "8 min read",
     category: "Remote Work",
     tags: ["Remote Work", "Productivity", "Collaboration", "Technology Tools"],
-    image: "/images/blog/remote-work-tools.png"
+    image: "/images/blog/remote-work-tools.svg"
   }
 ];
 
