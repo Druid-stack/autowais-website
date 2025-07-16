@@ -101,7 +101,7 @@ export default function Contact() {
           message: result.error || 'Failed to send message'
         });
       }
-    } catch (error) {
+    } catch {
       setSubmitStatus({
         type: 'error',
         message: 'Network error. Please try again.'
