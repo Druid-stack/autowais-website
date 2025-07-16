@@ -1,0 +1,18 @@
+<svg width="120" height="80" viewBox="0 0 120 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="120" height="80" rx="8" fill="#065f46" stroke="#10b981" stroke-width="1"/>
+  
+  <!-- Medical Cross -->
+  <rect x="55" y="25" width="10" height="20" fill="#ffffff" rx="2"/>
+  <rect x="50" y="30" width="20" height="10" fill="#ffffff" rx="2"/>
+  
+  <!-- HIPAA Text -->
+  <text x="60" y="55" text-anchor="middle" fill="#ffffff" font-family="Arial, sans-serif" font-size="14" font-weight="bold">HIPAA</text>
+  
+  <!-- Lock Icon for Security -->
+  <rect x="56" y="58" width="8" height="6" fill="none" stroke="#d1fae5" stroke-width="1" rx="1"/>
+  <circle cx="60" cy="61" r="3" fill="none" stroke="#d1fae5" stroke-width="1"/>
+  
+  <!-- Compliant Text -->
+  <text x="60" y="72" text-anchor="middle" fill="#d1fae5" font-family="Arial, sans-serif" font-size="9">COMPLIANT</text>
+</svg> 
