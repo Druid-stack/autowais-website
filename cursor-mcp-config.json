@@ -1,0 +1,27 @@
+{
+  "mcp.servers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["@modelcontextprotocol/server-filesystem", "/Users/prashdcruz/Documents/n8n%20Powerhouse/Power%20Plant"],
+      "env": {},
+      "timeout": 30000,
+      "maxConcurrentRequests": 10
+    },
+    "n8n-workflows": {
+      "command": "npx", 
+      "args": ["@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "your-github-token"
+      },
+      "timeout": 60000,
+      "maxConcurrentRequests": 20
+    }
+  },
+  "mcp.settings": {
+    "maxToolCalls": 50,
+    "maxConcurrentServers": 10,
+    "requestTimeout": 30000,
+    "retryAttempts": 3,
+    "retryDelay": 1000
+  }
+} 
