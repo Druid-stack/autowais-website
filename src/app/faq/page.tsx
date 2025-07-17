@@ -260,10 +260,10 @@ export default function FAQ() {
 
             {/* Category Filter */}
             <div className="mb-8">
-              <div className="flex flex-wrap gap-2 justify-center">
+              <div className="flex flex-wrap gap-2 justify-center items-center">
                 <button
                   onClick={() => setActiveCategory('All')}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors touch-manipulation ${
                     activeCategory === 'All'
                       ? 'bg-emerald-600 text-white'
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -275,7 +275,7 @@ export default function FAQ() {
                   <button
                     key={category}
                     onClick={() => setActiveCategory(category)}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition-colors touch-manipulation ${
                       activeCategory === category
                         ? 'bg-emerald-600 text-white'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -299,10 +299,10 @@ export default function FAQ() {
                 <div key={item.id} className="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
                   <button
                     onClick={() => toggleExpanded(item.id)}
-                    className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
+                    className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors touch-manipulation"
                   >
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900 pr-8">{item.question}</h3>
+                      <h3 className="text-lg font-semibold text-gray-900 pr-4 sm:pr-8">{item.question}</h3>
                       <span className="text-sm text-emerald-600 font-medium">{item.category}</span>
                     </div>
                     <div className="flex-shrink-0">
