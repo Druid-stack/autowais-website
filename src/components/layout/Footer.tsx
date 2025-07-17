@@ -5,6 +5,7 @@ const navigation = {
     { name: 'About Us', href: '/about' },
     { name: 'Services', href: '/services' },
     { name: 'Case Studies', href: '/case-studies' },
+    { name: 'FAQ', href: '/faq' },
     { name: 'Blog', href: '/blog' },
     { name: 'Contact Us', href: '/contact' },
   ],
@@ -153,6 +154,9 @@ export default function Footer() {
             © 2025 AUTOWAIS. All rights reserved. | Your Complete Technology Solutions Partner
           </p>
           <div className="mt-4 lg:mt-0 flex space-x-6">
+            <Link href="/faq" className="text-sm text-gray-300 hover:text-white transition-colors">
+              FAQ
+            </Link>
             <Link href="/about" className="text-sm text-gray-300 hover:text-white transition-colors">
               Privacy Policy
             </Link>
