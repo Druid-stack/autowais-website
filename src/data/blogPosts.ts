@@ -40,7 +40,7 @@ export const blogPosts: BlogPost[] = [
       <h2>Future Outlook</h2>
       <p>As AI technology continues to advance, we'll see even more sophisticated automation capabilities, including autonomous decision-making, natural language processing, and predictive maintenance.</p>
     `,
-    author: "Karl Hallis",
+    author: "Autowais Team",
     date: "2024-01-15",
     readTime: "8 min read",
     category: "Artificial Intelligence",
@@ -72,7 +72,7 @@ export const blogPosts: BlogPost[] = [
       <h2>Measuring Success</h2>
       <p>Track both technical metrics (system performance, user adoption) and business outcomes (revenue growth, customer satisfaction, operational efficiency).</p>
     `,
-    author: "Karl Hallis",
+    author: "Autowais Team",
     date: "2024-01-10",
     readTime: "10 min read",
     category: "Digital Transformation",
@@ -103,7 +103,7 @@ export const blogPosts: BlogPost[] = [
       <h2>Post-Migration Optimization</h2>
       <p>Monitor performance, optimize costs, and continuously improve your cloud infrastructure. Regular reviews help ensure you're maximizing the benefits of cloud technology.</p>
     `,
-    author: "Karl Hallis",
+    author: "Autowais Team",
     date: "2024-01-08",
     readTime: "7 min read",
     category: "Cloud Computing",
@@ -138,7 +138,7 @@ export const blogPosts: BlogPost[] = [
       <h2>Testing and Monitoring</h2>
       <p>Implement comprehensive testing strategies and continuous monitoring to ensure reliable integrations. Use tools for API documentation and version management.</p>
     `,
-    author: "Karl Hallis",
+    author: "Autowais Team",
     date: "2024-01-05",
     readTime: "9 min read",
     category: "Integration",
@@ -175,7 +175,7 @@ export const blogPosts: BlogPost[] = [
       <h2>Budget-Friendly Solutions</h2>
       <p>Many effective security measures are affordable or free. Focus on high-impact, low-cost solutions like password managers, antivirus software, and employee education.</p>
     `,
-    author: "Karl Hallis",
+    author: "Autowais Team",
     date: "2024-01-03",
     readTime: "6 min read",
     category: "Cybersecurity",
@@ -212,7 +212,7 @@ export const blogPosts: BlogPost[] = [
       <h2>Building a Data-Driven Culture</h2>
       <p>Success requires more than tools—it needs organizational commitment to data-driven decision making and continuous learning.</p>
     `,
-    author: "Karl Hallis",
+    author: "Autowais Team",
     date: "2024-01-01",
     readTime: "8 min read",
     category: "Data Analytics",
@@ -251,7 +251,7 @@ export const blogPosts: BlogPost[] = [
       <h2>Business Considerations</h2>
       <p>Consider monetization strategies, app store optimization, and analytics from the start. Success requires balancing user needs with business objectives.</p>
     `,
-    author: "Karl Hallis",
+    author: "Autowais Team",
     date: "2023-12-28",
     readTime: "7 min read",
     category: "Mobile Development",
@@ -292,7 +292,7 @@ export const blogPosts: BlogPost[] = [
       <h2>Change Management</h2>
       <p>Successful automation requires addressing employee concerns, providing training, and communicating the benefits clearly to all stakeholders.</p>
     `,
-    author: "Karl Hallis",
+    author: "Autowais Team",
     date: "2023-12-25",
     readTime: "9 min read",
     category: "Process Automation",
@@ -335,7 +335,7 @@ export const blogPosts: BlogPost[] = [
       <h2>Future-Proofing</h2>
       <p>Choose technologies that can evolve with your business, support new features, and integrate with emerging tools and platforms.</p>
     `,
-    author: "Karl Hallis",
+    author: "Autowais Team",
     date: "2023-12-22",
     readTime: "10 min read",
     category: "E-commerce",
@@ -377,7 +377,7 @@ export const blogPosts: BlogPost[] = [
       <h2>Cost Considerations</h2>
       <p>Balance tool costs with productivity benefits. Many solutions offer scalable pricing and free tiers for small teams.</p>
     `,
-    author: "Karl Hallis",
+    author: "Autowais Team",
     date: "2023-12-20",
     readTime: "8 min read",
     category: "Remote Work",
