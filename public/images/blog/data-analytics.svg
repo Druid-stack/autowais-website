@@ -1,0 +1,88 @@
+<svg width="800" height="400" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#764ba2;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f093fb;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="dataGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4facfe;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#00f2fe;stop-opacity:0.6" />
+    </linearGradient>
+  </defs>
+  
+  <rect width="800" height="400" fill="url(#bgGradient)"/>
+  
+  <!-- Professional silhouette -->
+  <g transform="translate(120, 200)">
+    <ellipse cx="0" cy="-80" rx="22" ry="28" fill="#000000"/>
+    <path d="M-22,-95 Q0,-105 22,-95 Q20,-80 0,-85 Q-20,-80 -22,-95" fill="#000000"/>
+    <rect x="-7" y="-52" width="14" height="18" fill="#000000"/>
+    <path d="M-32,-35 Q-35,-20 -32,0 L-32,35 L32,35 L32,0 Q35,-20 32,-35 Q28,-45 18,-45 L-18,-45 Q-28,-45 -32,-35" fill="#000000"/>
+    <ellipse cx="-45" cy="-10" rx="10" ry="25" fill="#000000"/>
+    <ellipse cx="45" cy="-10" rx="10" ry="25" fill="#000000"/>
+  </g>
+  
+  <!-- Bar chart -->
+  <g transform="translate(300, 280)" opacity="0.8">
+    <rect x="0" y="-40" width="15" height="40" fill="url(#dataGradient)"/>
+    <rect x="20" y="-60" width="15" height="60" fill="url(#dataGradient)"/>
+    <rect x="40" y="-25" width="15" height="25" fill="url(#dataGradient)"/>
+    <rect x="60" y="-80" width="15" height="80" fill="url(#dataGradient)"/>
+    <rect x="80" y="-50" width="15" height="50" fill="url(#dataGradient)"/>
+    <line x1="0" y1="0" x2="100" y2="0" stroke="#ffffff" stroke-width="1"/>
+    <line x1="0" y1="0" x2="0" y2="-85" stroke="#ffffff" stroke-width="1"/>
+  </g>
+  
+  <!-- Pie chart -->
+  <g transform="translate(550, 150)" opacity="0.8">
+    <circle cx="0" cy="0" r="40" fill="rgba(255,255,255,0.2)"/>
+    <path d="M0,0 L0,-40 A40,40 0 0,1 28.28,-28.28 Z" fill="url(#dataGradient)"/>
+    <path d="M0,0 L28.28,-28.28 A40,40 0 0,1 40,0 Z" fill="rgba(255,255,255,0.6)"/>
+    <path d="M0,0 L40,0 A40,40 0 0,1 0,40 Z" fill="rgba(255,255,255,0.4)"/>
+    <path d="M0,0 L0,40 A40,40 0 0,1 0,-40 Z" fill="rgba(255,255,255,0.3)"/>
+  </g>
+  
+  <!-- Line graph -->
+  <g transform="translate(450, 300)" opacity="0.8">
+    <polyline points="0,0 20,-15 40,-5 60,-25 80,-10 100,-30" 
+              fill="none" stroke="url(#dataGradient)" stroke-width="3"/>
+    <circle cx="0" cy="0" r="3" fill="#ffffff"/>
+    <circle cx="20" cy="-15" r="3" fill="#ffffff"/>
+    <circle cx="40" cy="-5" r="3" fill="#ffffff"/>
+    <circle cx="60" cy="-25" r="3" fill="#ffffff"/>
+    <circle cx="80" cy="-10" r="3" fill="#ffffff"/>
+    <circle cx="100" cy="-30" r="3" fill="#ffffff"/>
+  </g>
+  
+  <!-- Data points -->
+  <g opacity="0.6">
+    <circle cx="250" cy="120" r="3" fill="#4facfe">
+      <animate attributeName="r" values="3;6;3" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="600" cy="250" r="3" fill="#4facfe">
+      <animate attributeName="r" values="3;6;3" dur="2.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="350" cy="180" r="3" fill="#4facfe">
+      <animate attributeName="r" values="3;6;3" dur="3s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  
+  <!-- Abstract elements -->
+  <g opacity="0.3">
+    <circle cx="650" cy="320" r="25" fill="none" stroke="#ffffff" stroke-width="1"/>
+    <rect x="80" y="80" width="30" height="30" fill="none" stroke="#ffffff" stroke-width="1" transform="rotate(45 95 95)"/>
+  </g>
+  
+  <!-- Floating numbers -->
+  <g opacity="0.5" fill="#ffffff" font-family="Arial, sans-serif" font-size="12">
+    <text x="200" y="100">95%</text>
+    <text x="650" y="100">87.2K</text>
+    <text x="300" y="350">+24%</text>
+  </g>
+  
+  <rect x="0" y="0" width="800" height="80" fill="rgba(0,0,0,0.4)"/>
+  <text x="400" y="50" text-anchor="middle" fill="#ffffff" font-family="Arial, sans-serif" font-size="32" font-weight="bold">
+    Data Analytics
+  </text>
+</svg> 

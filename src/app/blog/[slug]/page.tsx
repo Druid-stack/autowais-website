@@ -23,21 +23,21 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     notFound();
   }
 
-  const getCategoryEmoji = (category: string) => {
-    const emojiMap: { [key: string]: string } = {
-      'Artificial Intelligence': '🤖',
-      'Digital Transformation': '🚀',
-      'Cloud Computing': '☁️',
-      'Integration': '🔗',
-      'Cybersecurity': '🔒',
-      'Data Analytics': '📊',
-      'Mobile Development': '📱',
-      'Process Automation': '⚙️',
-      'E-commerce': '🛒',
-      'Remote Work': '💻'
-    };
-    return emojiMap[category] || '📄';
-  };
+  // const getCategoryEmoji = (category: string) => {
+  //   const emojiMap: { [key: string]: string } = {
+  //     'Artificial Intelligence': '🤖',
+  //     'Digital Transformation': '🚀',
+  //     'Cloud Computing': '☁️',
+  //     'Integration': '🔗',
+  //     'Cybersecurity': '🔒',
+  //     'Data Analytics': '📊',
+  //     'Mobile Development': '📱',
+  //     'Process Automation': '⚙️',
+  //     'E-commerce': '🛒',
+  //     'Remote Work': '💻'
+  //   };
+  //   return emojiMap[category] || '📄';
+  // };
 
   return (
     <main className="pt-20">

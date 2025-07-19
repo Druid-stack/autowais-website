@@ -1,12 +1,17 @@
 'use client';
 
 import Link from 'next/link';
+<<<<<<< HEAD
 import { useEffect, useState } from 'react';
+=======
+import { useState } from 'react';
+>>>>>>> d65c44c1018ee7fa15ae995eb2628bac95e8c0c1
 
 const navigation = [
   { name: 'About Us', href: '/about' },
   { name: 'Services', href: '/services' },
   { name: 'Case Studies', href: '/case-studies' },
+  { name: 'FAQ', href: '/faq' },
   { name: 'Blog', href: '/blog' },
   { name: 'Contact Us', href: '/contact' },
 ];

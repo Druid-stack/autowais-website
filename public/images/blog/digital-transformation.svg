@@ -1,0 +1,130 @@
+<svg width="800" height="400" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#764ba2;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f093fb;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="techGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4facfe;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#00f2fe;stop-opacity:0.6" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="800" height="400" fill="url(#bgGradient)"/>
+  
+  <!-- Abstract tech elements -->
+  <g opacity="0.3">
+    <circle cx="120" cy="120" r="50" fill="none" stroke="#ffffff" stroke-width="1"/>
+    <rect x="600" y="80" width="60" height="60" fill="none" stroke="#ffffff" stroke-width="1" transform="rotate(30 630 110)"/>
+    <polygon points="150,320 200,280 250,320 200,360" fill="none" stroke="#ffffff" stroke-width="1"/>
+    <circle cx="680" cy="280" r="35" fill="none" stroke="#ffffff" stroke-width="1"/>
+  </g>
+  
+  <!-- Business person silhouette -->
+  <g transform="translate(200, 200)">
+    <!-- Head -->
+    <ellipse cx="0" cy="-80" rx="22" ry="28" fill="#000000"/>
+    <!-- Hair -->
+    <path d="M-22,-95 Q0,-105 22,-95 Q20,-80 0,-85 Q-20,-80 -22,-95" fill="#000000"/>
+    <!-- Neck -->
+    <rect x="-7" y="-52" width="14" height="18" fill="#000000"/>
+    <!-- Suit jacket -->
+    <path d="M-35,-35 Q-40,-20 -35,0 L-35,35 L35,35 L35,0 Q40,-20 35,-35 Q30,-45 20,-45 L-20,-45 Q-30,-45 -35,-35" fill="#000000"/>
+    <!-- Tie -->
+    <polygon points="0,-45 -5,-30 -3,20 3,20 5,-30" fill="#000000"/>
+    <!-- Arms -->
+    <ellipse cx="-50" cy="-10" rx="10" ry="30" fill="#000000"/>
+    <ellipse cx="50" cy="-10" rx="10" ry="30" fill="#000000"/>
+  </g>
+  
+  <!-- Digital transformation elements -->
+  <g opacity="0.7">
+    <!-- Traditional to digital arrow -->
+    <g transform="translate(400, 200)">
+      <path d="M-80,0 L60,0 L45,-12 M60,0 L45,12" stroke="url(#techGradient)" stroke-width="4" fill="none"/>
+      <!-- Old system -->
+      <g transform="translate(-100, 0)">
+        <rect x="-15" y="-15" width="30" height="30" fill="rgba(255,255,255,0.3)" stroke="#ffffff" stroke-width="2"/>
+        <rect x="-8" y="-8" width="16" height="16" fill="#ffffff" opacity="0.7"/>
+      </g>
+      <!-- New system -->
+      <g transform="translate(80, 0)">
+        <circle cx="0" cy="0" r="18" fill="url(#techGradient)" opacity="0.8"/>
+        <circle cx="0" cy="0" r="10" fill="#ffffff"/>
+        <path d="M-6,0 L6,0 M0,-6 L0,6" stroke="url(#techGradient)" stroke-width="2"/>
+      </g>
+    </g>
+    
+    <!-- Cloud computing -->
+    <g transform="translate(550, 140)">
+      <path d="M-30,15 Q-40,-5 -20,-5 Q-10,-15 10,-10 Q30,-15 35,5 Q25,25 5,20 Q-15,25 -30,15" 
+            fill="url(#techGradient)" opacity="0.7"/>
+      <circle cx="0" cy="8" r="4" fill="#ffffff"/>
+      <rect x="-8" y="4" width="16" height="2" fill="#ffffff"/>
+      <rect x="-6" y="8" width="12" height="2" fill="#ffffff"/>
+    </g>
+    
+    <!-- Mobile devices -->
+    <g transform="translate(600, 250)">
+      <rect x="-8" y="-15" width="16" height="30" rx="3" fill="url(#techGradient)" opacity="0.8"/>
+      <rect x="-6" y="-12" width="12" height="20" fill="#ffffff" opacity="0.9"/>
+      <circle cx="0" cy="12" r="2" fill="#ffffff"/>
+    </g>
+    
+    <!-- Analytics dashboard -->
+    <g transform="translate(120, 280)">
+      <rect x="0" y="0" width="6" height="15" fill="url(#techGradient)" opacity="0.7"/>
+      <rect x="8" y="-3" width="6" height="18" fill="url(#techGradient)" opacity="0.7"/>
+      <rect x="16" y="3" width="6" height="12" fill="url(#techGradient)" opacity="0.7"/>
+      <rect x="24" y="-6" width="6" height="21" fill="url(#techGradient)" opacity="0.7"/>
+    </g>
+    
+    <!-- Network connections -->
+    <g transform="translate(650, 120)" opacity="0.6">
+      <circle cx="0" cy="0" r="3" fill="#4facfe"/>
+      <circle cx="15" cy="10" r="2" fill="#4facfe"/>
+      <circle cx="-10" cy="12" r="2" fill="#4facfe"/>
+      <circle cx="8" cy="-8" r="2" fill="#4facfe"/>
+      <line x1="0" y1="0" x2="15" y2="10" stroke="#4facfe" stroke-width="1"/>
+      <line x1="0" y1="0" x2="-10" y2="12" stroke="#4facfe" stroke-width="1"/>
+      <line x1="0" y1="0" x2="8" y2="-8" stroke="#4facfe" stroke-width="1"/>
+    </g>
+  </g>
+  
+  <!-- Floating particles -->
+  <g opacity="0.5">
+    <circle cx="350" cy="120" r="2" fill="#ffffff">
+      <animate attributeName="cy" values="120;100;120" dur="3s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.5;1;0.5" dur="3s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="450" cy="300" r="1.5" fill="#4facfe">
+      <animate attributeName="cy" values="300;280;300" dur="4s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.3;0.8;0.3" dur="4s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  
+  <!-- Data streams -->
+  <g opacity="0.4">
+    <path d="M100,150 Q200,100 300,150" fill="none" stroke="#4facfe" stroke-width="2" stroke-dasharray="5,5">
+      <animate attributeName="stroke-dashoffset" values="0;-10" dur="2s" repeatCount="indefinite"/>
+    </path>
+    <path d="M500,250 Q600,200 700,250" fill="none" stroke="#ffffff" stroke-width="1" stroke-dasharray="3,3">
+      <animate attributeName="stroke-dashoffset" values="0;-6" dur="3s" repeatCount="indefinite"/>
+    </path>
+  </g>
+  
+  <!-- Title overlay -->
+  <rect x="0" y="0" width="800" height="80" fill="rgba(0,0,0,0.4)"/>
+  <text x="400" y="50" text-anchor="middle" fill="#ffffff" font-family="Arial, sans-serif" font-size="32" font-weight="bold">
+    Digital Transformation
+  </text>
+</svg> 
