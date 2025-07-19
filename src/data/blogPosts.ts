@@ -256,7 +256,7 @@ export const blogPosts: BlogPost[] = [
     readTime: "7 min read",
     category: "Mobile Development",
     tags: ["Mobile", "App Development", "Trends", "Technology"],
-    image: "/images/blog/mobile-development.png"
+    image: "/images/blog/mobile-trends.png"
   },
   {
     id: "automation-workflow-optimization",
