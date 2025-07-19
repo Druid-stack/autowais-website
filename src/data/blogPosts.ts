@@ -106,7 +106,7 @@ export const blogPosts: BlogPost[] = [
     readTime: "12 min read",
     category: "Digital Transformation",
     tags: ["Digital Transformation", "Business Opportunity", "Automation", "Innovation", "Competitive Advantage", "Technology", "Business Growth", "Digital Maturity", "Future of Business", "Strategic Planning"],
-    image: "/images/blog/digital-opportunity.png"
+    image: "/images/blog/trillion-opportunity-cityscape.png"
   },
   {
     id: "marketing-revolution-2025",
