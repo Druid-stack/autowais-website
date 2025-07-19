@@ -1,0 +1,200 @@
+const fs = require('fs');
+const path = require('path');
+
+// Create simple visual HTML for the opportunity image
+const htmlContent = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Opportunity Image</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            max-width: 600px;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+        }
+        
+        .money-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+        
+        .title {
+            font-size: 2.8rem;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 15px;
+            line-height: 1.2;
+        }
+        
+        .subtitle {
+            font-size: 1.4rem;
+            color: #718096;
+            margin-bottom: 30px;
+        }
+        
+        .opportunity-text {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: #667eea;
+            margin: 30px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .description {
+            font-size: 1.2rem;
+            color: #4a5568;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .cta-box {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 30px;
+        }
+        
+        .cta-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .cta-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .sparkle {
+            position: absolute;
+            font-size: 1.5rem;
+            animation: sparkle 3s infinite;
+        }
+        
+        .sparkle:nth-child(1) { top: 20%; left: 10%; animation-delay: 0s; }
+        .sparkle:nth-child(2) { top: 30%; right: 15%; animation-delay: 0.5s; }
+        .sparkle:nth-child(3) { bottom: 30%; left: 20%; animation-delay: 1s; }
+        .sparkle:nth-child(4) { bottom: 20%; right: 10%; animation-delay: 1.5s; }
+        
+        @keyframes sparkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+        
+        .treasure-chest {
+            font-size: 2rem;
+            margin: 20px 0;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { text-shadow: 0 0 5px #667eea; }
+            to { text-shadow: 0 0 20px #667eea, 0 0 30px #667eea; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sparkle">✨</div>
+        <div class="sparkle">💎</div>
+        <div class="sparkle">🌟</div>
+        <div class="sparkle">💫</div>
+        
+        <div class="money-icon">💰</div>
+        <h1 class="title">The Hidden Opportunity</h1>
+        <p class="subtitle">That Most Businesses Miss</p>
+        
+        <div class="treasure-chest">🗝️</div>
+        
+        <div class="opportunity-text">$2.8 Trillion</div>
+        
+        <p class="description">
+            There's a massive opportunity hiding in plain sight, 
+            and most businesses are completely blind to it. 
+            While they chase outdated strategies, 
+            the smart money is flowing elsewhere.
+        </p>
+        
+        <div class="cta-box">
+            <h3 class="cta-title">Are You Ready to Claim Your Share?</h3>
+            <p class="cta-subtitle">The future belongs to those who act now</p>
+        </div>
+    </div>
+</body>
+</html>
+`;
+
+// Write the HTML file
+const htmlPath = path.join(__dirname, 'simple-opportunity-image.html');
+fs.writeFileSync(htmlPath, htmlContent);
+
+console.log('🎨 **Simple Opportunity Image Created!**\n');
+console.log('📁 HTML file created: simple-opportunity-image.html');
+console.log('');
+console.log('🖼️ **Image Features:**');
+console.log('   • Clean, visual design (no analytics)');
+console.log('   • Large $2.8 trillion text');
+console.log('   • Money and treasure chest icons');
+console.log('   • Sparkling animation effects');
+console.log('   • Professional gradient background');
+console.log('');
+console.log('💡 **To capture the image:**');
+console.log('   1. Open the HTML file in your browser');
+console.log('   2. Take a screenshot');
+console.log('   3. Save as PNG/JPG for LinkedIn');
+console.log('');
+console.log('✨ **Visual elements:**');
+console.log('   • Animated money bag icon');
+console.log('   • Glowing treasure chest');
+console.log('   • Sparkling effects');
+console.log('   • Clean typography');
+console.log('');
+console.log('✅ **Ready for LinkedIn posting!**'); 
