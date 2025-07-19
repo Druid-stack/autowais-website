@@ -25,6 +25,7 @@
     "next": "latest",
     "nodemailer": "^7.0.5",
     "postcss": "latest",
+    "puppeteer": "^24.14.0",
     "react": "latest",
     "react-dom": "latest",
     "tailwindcss": "^3.4.17",
