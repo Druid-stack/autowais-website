@@ -1,0 +1,444 @@
+{
+  "name": "Automated LinkedIn Content Publishing",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerInterval": "days",
+              "daysBetweenTriggers": 1,
+              "triggerAtHour": 9,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      },
+      "name": "Daily Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [-1200, 0],
+      "id": "schedule-trigger-001"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "postDate",
+              "name": "postDate",
+              "value": "={{ $now.format('YYYY-MM-DD') }}",
+              "type": "string"
+            },
+            {
+              "id": "sessionId",
+              "name": "sessionId",
+              "value": "={{ $now.format('YYYY-MM-DD-HHmmss') }}-{{ Math.random().toString(36).substr(2, 9) }}",
+              "type": "string"
+            },
+            {
+              "id": "approvalId",
+              "name": "approvalId",
+              "value": "={{ $now.format('YYYY-MM-DD-HHmmss') }}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "name": "Initialize Session",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [-1000, 0],
+      "id": "init-session-001"
+    },
+    {
+      "parameters": {
+        "model": "tngtech/deepseek-r1t-chimera:free",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [-800, 200],
+      "id": "openrouter-model-001",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "CYDIW7Fux1hiuQGq",
+          "name": "OpenRouter account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "Today is {{ $('Initialize Session').item.json.postDate }}. Create a compelling LinkedIn post about business automation, digital transformation, or AI opportunities.\n\nRequirements:\n- 1200-1500 characters\n- Include relevant statistics or data points\n- Add 5-7 relevant hashtags\n- Make it engaging and professional\n- Include a call-to-action\n- Reference our website: autowais.com\n\nReturn in JSON format:\n{\n  \"postContent\": \"LinkedIn post content\",\n  \"hashtags\": [\"#hashtag1\", \"#hashtag2\"],\n  \"engagementScore\": \"1-100\",\n  \"topic\": \"Main topic covered\",\n  \"callToAction\": \"What action we want readers to take\"\n}",
+        "options": {
+          "systemMessage": "You are an expert LinkedIn content creator specializing in business automation, digital transformation, and AI topics. Create engaging, professional content that drives engagement and leads to our website."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [-600, 0],
+      "id": "content-generator-001",
+      "name": "LinkedIn Content Generator"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "Review this LinkedIn post content:\n{{ $('LinkedIn Content Generator').item.json.output }}\n\nAnalyze for:\n- Professional tone and brand alignment\n- Engagement potential\n- Factual accuracy\n- Call-to-action effectiveness\n- Hashtag relevance\n\nReturn analysis in JSON:\n{\n  \"qualityScore\": \"1-100\",\n  \"approvalStatus\": \"APPROVED/REJECTED/NEEDS_REVISION\",\n  \"feedback\": \"Detailed feedback\",\n  \"suggestions\": [\"suggestion1\", \"suggestion2\"],\n  \"riskLevel\": \"LOW/MEDIUM/HIGH\"\n}",
+        "options": {
+          "systemMessage": "You are a LinkedIn content quality assurance expert. Review posts for professionalism, engagement potential, and brand safety. Be thorough but fair in your assessment."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [-400, 0],
+      "id": "quality-checker-001",
+      "name": "Content Quality Checker"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C093NE376A0",
+          "mode": "list",
+          "cachedResultName": "slack-channel"
+        },
+        "text": "🤖 **LinkedIn Post Ready for Approval** - {{ $('Initialize Session').item.json.postDate }}\n\n**📝 Generated Content:**\n{{ JSON.parse($('LinkedIn Content Generator').item.json.output).postContent }}\n\n**🏷️ Hashtags:**\n{{ JSON.parse($('LinkedIn Content Generator').item.json.output).hashtags.join(' ') }}\n\n**📊 Quality Analysis:**\n• Quality Score: {{ JSON.parse($('Quality Checker').item.json.output).qualityScore }}/100\n• Approval Status: {{ JSON.parse($('Quality Checker').item.json.output).approvalStatus }}\n• Risk Level: {{ JSON.parse($('Quality Checker').item.json.output).riskLevel }}\n\n**💡 Topic:** {{ JSON.parse($('LinkedIn Content Generator').item.json.output).topic }}\n**🎯 Call to Action:** {{ JSON.parse($('LinkedIn Content Generator').item.json.output).callToAction }}\n\n**✅ Actions:**\n✅ Reply with `APPROVE-{{ $('Initialize Session').item.json.approvalId }}` - Post to LinkedIn\n❌ Reply with `REJECT-{{ $('Initialize Session').item.json.approvalId }}` - Skip today\n📝 Reply with `REVISE-{{ $('Initialize Session').item.json.approvalId }}` - Request revision\n\n**Session ID:** {{ $('Initialize Session').item.json.sessionId }}",
+        "otherOptions": {}
+      },
+      "name": "Request Approval",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.1,
+      "position": [-200, 0],
+      "id": "request-approval-001",
+      "webhookId": "approval-webhook-001",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "gxDWyHK4Pm0DriHc",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resume": "webhook",
+        "options": {
+          "webhookSuffix": "linkedin-approval"
+        }
+      },
+      "name": "Wait for Approval",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [0, 0],
+      "id": "wait-approval-001",
+      "webhookId": "approval-webhook-002"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.body.text }}",
+              "rightValue": "APPROVE-",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Check Approval Status",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [200, 0],
+      "id": "check-approval-001"
+    },
+    {
+      "parameters": {
+        "person": "{{ $vars.LINKEDIN_PERSON_ID }}",
+        "text": "{{ JSON.parse($('LinkedIn Content Generator').item.json.output).postContent }}\n\n{{ JSON.parse($('LinkedIn Content Generator').item.json.output).hashtags.join(' ') }}",
+        "additionalFields": {}
+      },
+      "name": "Post to LinkedIn",
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [400, -100],
+      "id": "post-linkedin-001",
+      "credentials": {
+        "linkedInOAuth2Api": {
+          "id": "1Zq008gZgg8CCqth",
+          "name": "LinkedIn account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "17vD0SOfJojqdcBIXVm5kd0nlxydUfB_-VcCBU2N5caA",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "LinkedIn Posts",
+          "mode": "list"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "date": "={{ $('Initialize Session').item.json.postDate }}",
+            "sessionId": "={{ $('Initialize Session').item.json.sessionId }}",
+            "postContent": "={{ JSON.parse($('LinkedIn Content Generator').item.json.output).postContent }}",
+            "hashtags": "={{ JSON.parse($('LinkedIn Content Generator').item.json.output).hashtags.join(', ') }}",
+            "linkedinPostId": "={{ $('Post to LinkedIn').item.json.id }}",
+            "status": "published",
+            "approvedBy": "={{ $('Wait for Approval').item.json.body.user_name }}",
+            "topic": "={{ JSON.parse($('LinkedIn Content Generator').item.json.output).topic }}",
+            "qualityScore": "={{ JSON.parse($('Quality Checker').item.json.output).qualityScore }}",
+            "engagementScore": "={{ JSON.parse($('LinkedIn Content Generator').item.json.output).engagementScore }}",
+            "callToAction": "={{ JSON.parse($('LinkedIn Content Generator').item.json.output).callToAction }}",
+            "publishedTime": "={{ $now }}"
+          },
+          "matchingColumns": [
+            {
+              "name": "date",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {
+          "insertRowsInSheet": true
+        }
+      },
+      "name": "Log to Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.2,
+      "position": [600, -100],
+      "id": "log-sheets-001",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "iIHxNEx1VfYn5pty",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C093NE376A0",
+          "mode": "list",
+          "cachedResultName": "slack-channel"
+        },
+        "text": "🚀 **LinkedIn Post Published Successfully!**\n\n**📅 Date:** {{ $('Initialize Session').item.json.postDate }}\n**👤 Approved by:** {{ $('Wait for Approval').item.json.body.user_name }}\n**🔗 LinkedIn Post ID:** {{ $('Post to LinkedIn').item.json.id }}\n\n**📝 Content Preview:**\n{{ JSON.parse($('LinkedIn Content Generator').item.json.output).postContent.substring(0, 100) }}...\n\n**📊 Performance Metrics:**\n• Quality Score: {{ JSON.parse($('Quality Checker').item.json.output).qualityScore }}/100\n• Engagement Score: {{ JSON.parse($('LinkedIn Content Generator').item.json.output).engagementScore }}/100\n• Topic: {{ JSON.parse($('LinkedIn Content Generator').item.json.output).topic }}\n\n**🏷️ Hashtags:** {{ JSON.parse($('LinkedIn Content Generator').item.json.output).hashtags.join(' ') }}\n\n**📈 Tracking:** Logged to Google Sheets\n\n**Session:** {{ $('Initialize Session').item.json.sessionId }}",
+        "otherOptions": {}
+      },
+      "name": "Success Notification",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.1,
+      "position": [800, -100],
+      "id": "success-notification-001",
+      "webhookId": "success-webhook-001",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "gxDWyHK4Pm0DriHc",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C093NE376A0",
+          "mode": "list",
+          "cachedResultName": "slack-channel"
+        },
+        "text": "❌ **LinkedIn Post Rejected** - {{ $('Initialize Session').item.json.postDate }}\n\n**👤 Rejected by:** {{ $('Wait for Approval').item.json.body.user_name }}\n**⏰ Time:** {{ $now }}\n\n**📝 Content:**\n{{ JSON.parse($('LinkedIn Content Generator').item.json.output).postContent.substring(0, 200) }}...\n\n**📊 Quality Analysis:**\n• Quality Score: {{ JSON.parse($('Quality Checker').item.json.output).qualityScore }}/100\n• Status: {{ JSON.parse($('Quality Checker').item.json.output).approvalStatus }}\n• Risk Level: {{ JSON.parse($('Quality Checker').item.json.output).riskLevel }}\n\n**💡 Feedback:**\n{{ JSON.parse($('Quality Checker').item.json.output).feedback }}\n\n**🔄 Next Steps:** Will generate new content tomorrow\n\n**Session:** {{ $('Initialize Session').item.json.sessionId }}",
+        "otherOptions": {}
+      },
+      "name": "Rejection Notification",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.1,
+      "position": [400, 100],
+      "id": "rejection-notification-001",
+      "webhookId": "rejection-webhook-001",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "gxDWyHK4Pm0DriHc",
+          "name": "Slack account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Daily Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Initialize Session",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Initialize Session": {
+      "main": [
+        [
+          {
+            "node": "LinkedIn Content Generator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "LinkedIn Content Generator",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Quality Checker",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LinkedIn Content Generator": {
+      "main": [
+        [
+          {
+            "node": "Quality Checker",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Quality Checker": {
+      "main": [
+        [
+          {
+            "node": "Request Approval",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Request Approval": {
+      "main": [
+        [
+          {
+            "node": "Wait for Approval",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for Approval": {
+      "main": [
+        [
+          {
+            "node": "Check Approval Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Approval Status": {
+      "main": [
+        [
+          {
+            "node": "Post to LinkedIn",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Rejection Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post to LinkedIn": {
+      "main": [
+        [
+          {
+            "node": "Log to Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log to Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Success Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "timezone": "America/New_York"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "linkedin-automation-workflow-001"
+  },
+  "id": "linkedin-automation-workflow",
+  "tags": [
+    {
+      "createdAt": "2025-01-21T09:00:00.000Z",
+      "updatedAt": "2025-01-21T09:00:00.000Z",
+      "id": "linkedin-automation",
+      "name": "linkedin-automation"
+    },
+    {
+      "createdAt": "2025-01-21T09:00:00.000Z",
+      "updatedAt": "2025-01-21T09:00:00.000Z",
+      "id": "content-automation",
+      "name": "content-automation"
+    },
+    {
+      "createdAt": "2025-01-21T09:00:00.000Z",
+      "updatedAt": "2025-01-21T09:00:00.00Z",
+      "id": "social-media",
+      "name": "social-media"
+    }
+  ]
+} 
