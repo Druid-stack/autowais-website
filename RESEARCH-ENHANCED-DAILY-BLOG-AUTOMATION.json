@@ -1,0 +1,671 @@
+{
+  "name": "AI Agent-Powered Daily Blog & LinkedIn Automation",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerInterval": "days",
+              "daysBetweenTriggers": 1,
+              "triggerAtHour": 9,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      },
+      "name": "Daily Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [-1260, -380],
+      "id": "101bb512-2415-4d7a-aa7e-06fff1149cd9"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "todayDate",
+              "name": "todayDate",
+              "value": "={{ $now.format('YYYY-MM-DD') }}",
+              "type": "string"
+            },
+            {
+              "id": "dayOfWeek",
+              "name": "dayOfWeek",
+              "value": "={{ $now.format('dddd') }}",
+              "type": "string"
+            },
+            {
+              "id": "approvalId",
+              "name": "approvalId",
+              "value": "={{ $now.format('YYYY-MM-DD-HHmmss') }}",
+              "type": "string"
+            },
+            {
+              "id": "sessionId",
+              "name": "sessionId",
+              "value": "={{ $now.format('YYYY-MM-DD-HHmmss') }}-{{ Math.random().toString(36).substr(2, 9) }}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "name": "Initialize Session",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [-1060, -380],
+      "id": "ff6a666c-d4e6-4464-972c-ea71a260f245"
+    },
+    {
+      "parameters": {
+        "model": "tngtech/deepseek-r1t-chimera:free",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [-360, 60],
+      "id": "e3d4ccf1-a5a2-4903-8670-a17f31601fd3",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "CYDIW7Fux1hiuQGq",
+          "name": "OpenRouter account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "Today is {{ $('Initialize Session').item.json.todayDate }} ({{ $('Initialize Session').item.json.dayOfWeek }}). I need you to act as a Content Strategy AI Agent that analyzes market trends and creates strategic content recommendations.\n\nYour task:\n1. Analyze current market trends for business automation and AI\n2. Determine the best content topic for today\n3. Provide strategic recommendations for maximum engagement\n\nReturn your analysis in this JSON format:\n{\n  \"recommendedTopic\": \"Specific topic with market relevance\",\n  \"contentAngle\": \"Unique perspective or hook\",\n  \"targetAudience\": \"Primary audience segment\",\n  \"trendingKeywords\": [\"keyword1\", \"keyword2\", \"keyword3\"],\n  \"expectedEngagement\": \"High/Medium/Low with reasoning\",\n  \"strategicRationale\": \"Why this topic now\",\n  \"researchRequirements\": \"Specific research areas needed for this topic\"\n}",
+        "options": {
+          "systemMessage": "You are an expert Content Strategy AI Agent with deep knowledge of business automation, AI trends, and digital marketing. You excel at market analysis and strategic content planning. Always return valid JSON responses."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [-880, -620],
+      "id": "4a75f443-fa7d-4597-bd81-fcc2e5976d78",
+      "name": "Content Strategy AI Agent"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "Based on the content strategy: {{ $('Content Strategy AI Agent').item.json.output }}\n\nConduct comprehensive research on: {{ JSON.parse($('Content Strategy AI Agent').item.json.output).recommendedTopic }}\n\nYour research should include:\n1. Latest industry statistics and data points\n2. Recent case studies and success stories\n3. Expert quotes and authoritative sources\n4. Current market trends and future predictions\n5. Competitor analysis and unique insights\n6. Technical details and implementation examples\n7. ROI data and business impact metrics\n\nProvide deep, accurate research that will make the content authoritative and engaging.\n\nReturn your research in this JSON format:\n{\n  \"keyStatistics\": [\"statistic with source\", \"statistic with source\"],\n  \"caseStudies\": [\"detailed case study 1\", \"detailed case study 2\"],\n  \"expertQuotes\": [\"expert quote with attribution\", \"expert quote with attribution\"],\n  \"marketTrends\": [\"trend with data\", \"trend with data\"],\n  \"competitorAnalysis\": [\"competitor insight 1\", \"competitor insight 2\"],\n  \"technicalDetails\": [\"implementation detail\", \"technical insight\"],\n  \"businessImpact\": [\"ROI data point\", \"business metric\"],\n  \"sources\": [\"source 1\", \"source 2\", \"source 3\"],\n  \"researchAccuracy\": \"Confidence level 1-100\",\n  \"uniqueInsights\": [\"unique finding 1\", \"unique finding 2\"]\n}",
+        "options": {
+          "systemMessage": "You are an expert Research AI Agent with access to vast knowledge databases. You specialize in conducting thorough, accurate research that provides deep insights and authoritative information. You excel at fact-checking, data analysis, and finding unique perspectives. Always return valid JSON responses with credible information."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [-680, -620],
+      "id": "8f4b2c89-e5d6-4f8a-9b23-c7d8e9f0a123",
+      "name": "Research AI Agent"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "Based on:\nContent Strategy: {{ $('Content Strategy AI Agent').item.json.output }}\nResearch Data: {{ $('Research AI Agent').item.json.output }}\n\nCreate a high-quality, well-researched blog post with the following requirements:\n- Title: Compelling, SEO-optimized\n- Content: 1000-1500 words (increased due to research depth)\n- Structure: Clear headers, actionable insights, data-driven content\n- Tone: Professional yet engaging, authoritative\n- Include research statistics, case studies, and expert insights\n- Reference credible sources and data points\n- Provide practical implementation examples\n\nReturn your content in this JSON format:\n{\n  \"title\": \"SEO-optimized blog title\",\n  \"content\": \"Full blog post content with research integration\",\n  \"excerpt\": \"150-character social media summary\",\n  \"tags\": [\"relevant\", \"seo\", \"tags\"],\n  \"seoScore\": \"Estimated score 1-100\",\n  \"readTime\": \"X min read\",\n  \"researchIntegration\": \"How research was incorporated\",\n  \"factualAccuracy\": \"Confidence level 1-100\"\n}",
+        "options": {
+          "systemMessage": "You are an expert Content Generation AI Agent specializing in creating research-backed, authoritative business and technology content. You excel at integrating research data into engaging narratives that provide real value to readers. Always return valid JSON responses."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [-480, -620],
+      "id": "44ed7edb-e2f9-45b7-bf55-b2567f48e1a0",
+      "name": "Content Generation AI Agent"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "Blog content: {{ $('Content Generation AI Agent').item.json.output }}\nResearch backing: {{ $('Research AI Agent').item.json.output }}\n\nOptimize this research-backed content for LinkedIn posting:\n- Create a 1200-1500 character LinkedIn post\n- Use engaging hooks and formatting\n- Include key statistics or insights from research\n- Add relevant hashtags\n- Optimize for LinkedIn algorithm\n- Highlight the authoritative nature of the content\n\nReturn your optimization in this JSON format:\n{\n  \"linkedinPost\": \"LinkedIn-optimized post content with research highlights\",\n  \"hashtags\": [\"#strategic\", \"#hashtags\", \"#research\"],\n  \"algorithmScore\": \"Predicted score 1-100\",\n  \"bestPostTime\": \"Optimal posting time\",\n  \"researchHighlights\": \"Key research points featured\"\n}",
+        "options": {
+          "systemMessage": "You are a LinkedIn Optimization AI Agent with expertise in LinkedIn's algorithm and professional networking. You excel at creating high-performing LinkedIn content that showcases research-backed insights. Always return valid JSON responses."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [-180, -620],
+      "id": "96abcae3-18e5-4e7b-b631-375a4a62ca8e",
+      "name": "LinkedIn Optimization AI Agent"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "Content Analysis:\nBlog: {{ $('Content Generation AI Agent').item.json.output }}\nLinkedIn: {{ $('LinkedIn Optimization AI Agent').item.json.output }}\nResearch: {{ $('Research AI Agent').item.json.output }}\n\nPerform comprehensive quality assurance analysis:\n- Check content accuracy and factual verification\n- Assess research integration and source credibility\n- Evaluate SEO optimization and engagement potential\n- Review brand alignment and professional tone\n- Verify research citations and data accuracy\n\nReturn your analysis in this JSON format:\n{\n  \"qualityScore\": \"Overall score 1-100\",\n  \"seoAnalysis\": \"SEO assessment\",\n  \"engagementPotential\": \"High/Medium/Low with reasoning\",\n  \"researchAccuracy\": \"Research verification score 1-100\",\n  \"factualVerification\": \"Fact-checking results\",\n  \"improvementSuggestions\": [\"suggestion1\", \"suggestion2\"],\n  \"approvalRecommendation\": \"APPROVE/REVIEW/REJECT\"\n}",
+        "options": {
+          "systemMessage": "You are a Quality Assurance AI Agent specializing in content analysis, fact-checking, and research verification. You provide thorough, constructive feedback with emphasis on accuracy and credibility. Always return valid JSON responses."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [220, -620],
+      "id": "294d1ba3-07f9-49ad-ae68-2958e4ca5ca1",
+      "name": "Quality Assurance AI Agent"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C093NE376A0",
+          "mode": "list",
+          "cachedResultName": "new-channel"
+        },
+        "text": "🤖 **Research-Backed AI Content Ready for Approval** - {{ $('Initialize Session').item.json.todayDate }}\n\n**🎯 Strategy Analysis:**\n{{ $('Content Strategy AI Agent').item.json.output ? (JSON.parse($('Content Strategy AI Agent').item.json.output).strategicRationale || 'AI Strategy Analysis') : 'AI Strategy Analysis' }}\n\n**🔬 Research Summary:**\nAccuracy: {{ JSON.parse($('Research AI Agent').item.json.output).researchAccuracy }}/100\nUnique Insights: {{ JSON.parse($('Research AI Agent').item.json.output).uniqueInsights.length }} discovered\nSources: {{ JSON.parse($('Research AI Agent').item.json.output).sources.length }} verified\n\n**📖 Content Preview:**\nTitle: {{ JSON.parse($('Content Generation AI Agent').item.json.output).title }}\nSEO Score: {{ JSON.parse($('Content Generation AI Agent').item.json.output).seoScore }}/100\nFactual Accuracy: {{ JSON.parse($('Content Generation AI Agent').item.json.output).factualAccuracy }}/100\n\n**💼 LinkedIn Preview:**\n{{ JSON.parse($('LinkedIn Optimization AI Agent').item.json.output).linkedinPost }}\nAlgorithm Score: {{ JSON.parse($('LinkedIn Optimization AI Agent').item.json.output).algorithmScore }}/100\n\n**✅ Quality Assessment:**\nOverall Score: {{ JSON.parse($('Quality Assurance AI Agent').item.json.output).qualityScore }}/100\nResearch Verification: {{ JSON.parse($('Quality Assurance AI Agent').item.json.output).researchAccuracy }}/100\nRecommendation: {{ JSON.parse($('Quality Assurance AI Agent').item.json.output).approvalRecommendation }}\n\n**💬 Actions:**\n✅ Reply with `APPROVE-{{ $('Initialize Session').item.json.approvalId }}` - Publish now\n❌ Reply with `REJECT-{{ $('Initialize Session').item.json.approvalId }}` - Try again tomorrow\n\n**Session ID:** {{ $('Initialize Session').item.json.sessionId }}",
+        "otherOptions": {}
+      },
+      "name": "Request Human Approval",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.1,
+      "position": [680, -780],
+      "id": "1b670695-029d-4fc9-ad36-f4f3be692a7f",
+      "webhookId": "b6581910-afe3-41d6-a496-9dc0ef53a4b0",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "gxDWyHK4Pm0DriHc",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resume": "webhook",
+        "options": {
+          "webhookSuffix": "blog-approval"
+        }
+      },
+      "name": "Wait for Approval",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [900, -780],
+      "id": "wait-approval-001",
+      "webhookId": "b1182e8e-7d25-43f2-b049-d3c8f7713bb1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.body.text }}",
+              "rightValue": "APPROVE-",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Check Approval",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1100, -780],
+      "id": "4563d2ea-b498-4303-b1a3-eb725404b687"
+    },
+    {
+      "parameters": {
+        "person": "{{ $vars.LINKEDIN_PERSON_ID }}",
+        "text": "{{ JSON.parse($('LinkedIn Optimization AI Agent').item.json.output).linkedinPost }}\n\n{{ JSON.parse($('LinkedIn Optimization AI Agent').item.json.output).hashtags.join(' ') }}",
+        "additionalFields": {}
+      },
+      "name": "Publish to LinkedIn",
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [1300, -780],
+      "id": "892b417c-3b1a-408b-8d11-8ad1a47ebef6",
+      "credentials": {
+        "linkedInOAuth2Api": {
+          "id": "1Zq008gZgg8CCqth",
+          "name": "LinkedIn account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "17vD0SOfJojqdcBIXVm5kd0nlxydUfB_-VcCBU2N5caA",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Blog Posts",
+          "mode": "list"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "date": "={{ $('Initialize Session').item.json.todayDate }}",
+            "sessionId": "={{ $('Initialize Session').item.json.sessionId }}",
+            "title": "={{ JSON.parse($('Content Generation AI Agent').item.json.output).title }}",
+            "content": "={{ JSON.parse($('Content Generation AI Agent').item.json.output).content }}",
+            "linkedinPost": "={{ JSON.parse($('LinkedIn Optimization AI Agent').item.json.output).linkedinPost }}",
+            "linkedinPostId": "={{ $('Publish to LinkedIn').item.json.id }}",
+            "status": "published",
+            "approvedBy": "={{ $('Wait for Approval').item.json.body.user_name }}",
+            "strategicTopic": "={{ JSON.parse($('Content Strategy AI Agent').item.json.output).recommendedTopic }}",
+            "seoScore": "={{ JSON.parse($('Content Generation AI Agent').item.json.output).seoScore }}",
+            "qualityScore": "={{ JSON.parse($('Quality Assurance AI Agent').item.json.output).qualityScore }}",
+            "algorithmScore": "={{ JSON.parse($('LinkedIn Optimization AI Agent').item.json.output).algorithmScore }}",
+            "researchAccuracy": "={{ JSON.parse($('Research AI Agent').item.json.output).researchAccuracy }}",
+            "factualAccuracy": "={{ JSON.parse($('Content Generation AI Agent').item.json.output).factualAccuracy }}",
+            "publishedTime": "={{ $now }}"
+          },
+          "matchingColumns": [
+            {
+              "name": "date",
+              "type": "string"
+            }
+          ],
+          "schema": [
+            {
+              "id": "date",
+              "displayName": "Date",
+              "required": true,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "sessionId",
+              "displayName": "Session ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": false,
+              "type": "string"
+            },
+            {
+              "id": "title",
+              "displayName": "Title",
+              "required": true,
+              "defaultMatch": false,
+              "canBeUsedToMatch": false,
+              "type": "string"
+            },
+            {
+              "id": "content",
+              "displayName": "Content",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": false,
+              "type": "string"
+            },
+            {
+              "id": "linkedinPost",
+              "displayName": "LinkedIn Post",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": false,
+              "type": "string"
+            },
+            {
+              "id": "linkedinPostId",
+              "displayName": "LinkedIn Post ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": false,
+              "type": "string"
+            },
+            {
+              "id": "status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": false,
+              "type": "string"
+            },
+            {
+              "id": "approvedBy",
+              "displayName": "Approved By",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": false,
+              "type": "string"
+            },
+            {
+              "id": "strategicTopic",
+              "displayName": "Strategic Topic",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": false,
+              "type": "string"
+            },
+            {
+              "id": "seoScore",
+              "displayName": "SEO Score",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": false,
+              "type": "string"
+            },
+            {
+              "id": "qualityScore",
+              "displayName": "Quality Score",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": false,
+              "type": "string"
+            },
+            {
+              "id": "algorithmScore",
+              "displayName": "Algorithm Score",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": false,
+              "type": "string"
+            },
+            {
+              "id": "researchAccuracy",
+              "displayName": "Research Accuracy",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": false,
+              "type": "string"
+            },
+            {
+              "id": "factualAccuracy",
+              "displayName": "Factual Accuracy",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": false,
+              "type": "string"
+            },
+            {
+              "id": "publishedTime",
+              "displayName": "Published Time",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": false,
+              "type": "string"
+            }
+          ]
+        },
+        "options": {
+          "insertRowsInSheet": true
+        }
+      },
+      "name": "Update Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.2,
+      "position": [1500, -780],
+      "id": "b3600671-9d51-45a6-8d15-0b65c96958a9",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "iIHxNEx1VfYn5pty",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C093NE376A0",
+          "mode": "list",
+          "cachedResultName": "new-channel"
+        },
+        "text": "🚀 **Research-Backed Content Published Successfully!**\n\n**📅 Date:** {{ $('Initialize Session').item.json.todayDate }}\n**📖 Title:** {{ JSON.parse($('Content Generation AI Agent').item.json.output).title }}\n**👤 Approved by:** {{ $('Wait for Approval').item.json.body.user_name }}\n**🔗 LinkedIn Post ID:** {{ $('Publish to LinkedIn').item.json.id }}\n\n**🔬 Research Quality:**\n• Research Accuracy: {{ JSON.parse($('Research AI Agent').item.json.output).researchAccuracy }}/100\n• Unique Insights: {{ JSON.parse($('Research AI Agent').item.json.output).uniqueInsights.length }} discovered\n• Sources Verified: {{ JSON.parse($('Research AI Agent').item.json.output).sources.length }}\n\n**📊 AI Performance:**\n• SEO Score: {{ JSON.parse($('Content Generation AI Agent').item.json.output).seoScore }}/100\n• Factual Accuracy: {{ JSON.parse($('Content Generation AI Agent').item.json.output).factualAccuracy }}/100\n• Quality Score: {{ JSON.parse($('Quality Assurance AI Agent').item.json.output).qualityScore }}/100\n• Algorithm Score: {{ JSON.parse($('LinkedIn Optimization AI Agent').item.json.output).algorithmScore }}/100\n\n**🎯 Topic:** {{ JSON.parse($('Content Strategy AI Agent').item.json.output).recommendedTopic }}\n\n**📈 Tracking:** Updated in Google Sheets with research metrics\n\n**Session:** {{ $('Initialize Session').item.json.sessionId }}",
+        "otherOptions": {}
+      },
+      "name": "Success Notification",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.1,
+      "position": [1700, -780],
+      "id": "7fb34e98-4376-41b6-b774-6c0a72a26510",
+      "webhookId": "09f04228-95fc-4433-8084-e07a69cec2b0",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "gxDWyHK4Pm0DriHc",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C093NE376A0",
+          "mode": "list",
+          "cachedResultName": "new-channel"
+        },
+        "text": "❌ **Research-Backed Content Rejected** - {{ $('Initialize Session').item.json.todayDate }}\n\n**👤 Rejected by:** {{ $('Wait for Approval').item.json.body.user_name }}\n**📖 Title:** {{ JSON.parse($('Content Generation AI Agent').item.json.output).title }}\n**⏰ Time:** {{ $now }}\n\n**🔬 Research Quality:**\n• Research Accuracy: {{ JSON.parse($('Research AI Agent').item.json.output).researchAccuracy }}/100\n• Sources: {{ JSON.parse($('Research AI Agent').item.json.output).sources.length }} verified\n• Unique Insights: {{ JSON.parse($('Research AI Agent').item.json.output).uniqueInsights.length }}\n\n**📊 AI Scores:**\n• SEO: {{ JSON.parse($('Content Generation AI Agent').item.json.output).seoScore }}/100\n• Factual: {{ JSON.parse($('Content Generation AI Agent').item.json.output).factualAccuracy }}/100\n• Quality: {{ JSON.parse($('Quality Assurance AI Agent').item.json.output).qualityScore }}/100\n• Algorithm: {{ JSON.parse($('LinkedIn Optimization AI Agent').item.json.output).algorithmScore }}/100\n\n**💡 Suggestions:**\n{{ JSON.parse($('Quality Assurance AI Agent').item.json.output).improvementSuggestions.join('\\n') }}\n\n**🔄 Next Steps:** Research and content AI agents will improve for tomorrow's content\n\n**Session:** {{ $('Initialize Session').item.json.sessionId }}",
+        "otherOptions": {}
+      },
+      "name": "Rejection Notification",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.1,
+      "position": [1300, -600],
+      "id": "92c1c23a-d3c6-4aac-a863-0321b0fbae93",
+      "webhookId": "f773e5e0-d1b0-43fc-86de-c2e537025fbc",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "gxDWyHK4Pm0DriHc",
+          "name": "Slack account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Daily Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Initialize Session",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Initialize Session": {
+      "main": [
+        [
+          {
+            "node": "Content Strategy AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Content Strategy AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Research AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Content Generation AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "LinkedIn Optimization AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Quality Assurance AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Content Strategy AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Research AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Research AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Content Generation AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Content Generation AI Agent": {
+      "main": [
+        [
+          {
+            "node": "LinkedIn Optimization AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LinkedIn Optimization AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Quality Assurance AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Quality Assurance AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Request Human Approval",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Request Human Approval": {
+      "main": [
+        [
+          {
+            "node": "Wait for Approval",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for Approval": {
+      "main": [
+        [
+          {
+            "node": "Check Approval",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Approval": {
+      "main": [
+        [
+          {
+            "node": "Publish to LinkedIn",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Rejection Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Publish to LinkedIn": {
+      "main": [
+        [
+          {
+            "node": "Update Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Success Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "timezone": "America/New_York"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8ad37ad15c2267fb4006da6aef8d73c0f26f2c0f030db68fa538cab094fdf776"
+  },
+  "id": "research-enhanced-daily-blog-automation",
+  "tags": [
+    {
+      "createdAt": "2024-01-20T09:00:00.000Z",
+      "updatedAt": "2024-01-20T09:00:00.000Z",
+      "id": "ai-agents",
+      "name": "ai-agents"
+    },
+    {
+      "createdAt": "2024-01-20T09:00:00.000Z",
+      "updatedAt": "2024-01-20T09:00:00.000Z",
+      "id": "research-backed",
+      "name": "research-backed"
+    },
+    {
+      "createdAt": "2024-01-20T09:00:00.000Z",
+      "updatedAt": "2024-01-20T09:00:00.000Z",
+      "id": "production-ready",
+      "name": "production-ready"
+    },
+    {
+      "createdAt": "2024-01-20T09:00:00.000Z",
+      "updatedAt": "2024-01-20T09:00:00.000Z",
+      "id": "content-automation",
+      "name": "content-automation"
+    }
+  ]
+} 

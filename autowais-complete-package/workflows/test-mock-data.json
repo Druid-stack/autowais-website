@@ -1,0 +1,245 @@
+{
+  "mockCustomers": [
+    {
+      "id": "cust_001",
+      "name": "Sarah Johnson",
+      "email": "sarah.johnson@email.com",
+      "phone": "+1-555-0123",
+      "loyaltyStatus": "gold",
+      "totalBookings": 3,
+      "totalSpent": 15750,
+      "lastBookingDate": "2024-01-15",
+      "joinDate": "2022-03-10",
+      "preferences": {
+        "preferredActivities": ["northern-lights", "wildlife-viewing"],
+        "accommodationType": "luxury",
+        "travelStyle": "adventure",
+        "dietaryRestrictions": "vegetarian"
+      },
+      "vipStatus": true,
+      "notes": [
+        {
+          "date": "2024-01-20",
+          "note": "Excellent customer, loves photography tours",
+          "agent": "Human Agent"
+        }
+      ]
+    },
+    {
+      "id": "cust_002", 
+      "name": "Michael Chen",
+      "email": "michael.chen@email.com",
+      "phone": "+1-555-0456",
+      "loyaltyStatus": "silver",
+      "totalBookings": 2,
+      "totalSpent": 8900,
+      "lastBookingDate": "2023-12-05",
+      "joinDate": "2023-01-15",
+      "preferences": {
+        "preferredActivities": ["dog-sledding", "ice-hotels"],
+        "accommodationType": "standard",
+        "travelStyle": "cultural",
+        "dietaryRestrictions": "none"
+      },
+      "vipStatus": false,
+      "notes": []
+    },
+    {
+      "id": "cust_003",
+      "name": "Emma Rodriguez",
+      "email": "emma.rodriguez@email.com", 
+      "phone": "+1-555-0789",
+      "loyaltyStatus": "platinum",
+      "totalBookings": 7,
+      "totalSpent": 32500,
+      "lastBookingDate": "2024-02-28",
+      "joinDate": "2021-05-20",
+      "preferences": {
+        "preferredActivities": ["arctic-cruise", "midnight-sun", "indigenous-culture"],
+        "accommodationType": "luxury",
+        "travelStyle": "expedition",
+        "dietaryRestrictions": "gluten-free"
+      },
+      "vipStatus": true,
+      "notes": [
+        {
+          "date": "2024-03-01",
+          "note": "Repeat customer, prefers spring expeditions",
+          "agent": "AI Agent"
+        }
+      ]
+    }
+  ],
+  "mockBookings": [
+    {
+      "id": "book_001",
+      "customerId": "cust_001",
+      "customerEmail": "sarah.johnson@email.com",
+      "tourName": "Northern Lights Photography Expedition",
+      "tourId": "tour_nl_photo_001",
+      "status": "confirmed",
+      "departureDate": "2024-12-15",
+      "returnDate": "2024-12-22",
+      "participants": 2,
+      "totalCost": 5850,
+      "paymentStatus": "paid",
+      "specialRequests": "Vegetarian meals, early morning photography sessions",
+      "bookingDate": "2024-01-15",
+      "cancellationPolicy": "flexible"
+    },
+    {
+      "id": "book_002",
+      "customerId": "cust_002",
+      "customerEmail": "michael.chen@email.com",
+      "tourName": "Arctic Dog Sledding Adventure",
+      "tourId": "tour_dog_sled_002",
+      "status": "confirmed",
+      "departureDate": "2024-11-28",
+      "returnDate": "2024-12-05",
+      "participants": 1,
+      "totalCost": 3200,
+      "paymentStatus": "deposit_paid",
+      "specialRequests": "Single accommodation",
+      "bookingDate": "2023-12-05",
+      "cancellationPolicy": "standard"
+    },
+    {
+      "id": "book_003",
+      "customerId": "cust_003",
+      "customerEmail": "emma.rodriguez@email.com",
+      "tourName": "Midnight Sun Arctic Cruise",
+      "tourId": "tour_cruise_003",
+      "status": "pending",
+      "departureDate": "2024-06-21",
+      "returnDate": "2024-06-30",
+      "participants": 2,
+      "totalCost": 8900,
+      "paymentStatus": "pending",
+      "specialRequests": "Gluten-free meals, balcony cabin",
+      "bookingDate": "2024-02-28",
+      "cancellationPolicy": "flexible"
+    }
+  ],
+  "mockTickets": [
+    {
+      "id": "ticket_001",
+      "ticketId": "AS-1709123456789",
+      "customerId": "cust_001",
+      "customerEmail": "sarah.johnson@email.com",
+      "customerName": "Sarah Johnson",
+      "subject": "Question about Northern Lights tour weather",
+      "category": "tour-inquiry",
+      "priority": "normal",
+      "status": "resolved",
+      "channel": "email",
+      "originalMessage": "Hi, I'm wondering about the weather conditions for my Northern Lights tour in December. Should I bring any special gear?",
+      "aiResponse": "Hello Sarah! For your Northern Lights Photography Expedition in December, temperatures will range from -15°C to -25°C. We recommend thermal layers, waterproof boots, and warm gloves. All specialized photography equipment and Arctic gear will be provided. We'll send you a detailed packing list 2 weeks before departure.",
+      "aiAnalysis": {
+        "sentiment": "neutral",
+        "intent": "information-request",
+        "confidence": 0.95
+      },
+      "createdAt": "2024-03-15T10:30:00Z",
+      "resolvedAt": "2024-03-15T10:32:00Z",
+      "createdBy": "AI Agent - OpenRouter"
+    }
+  ],
+  "mockApiResponses": {
+    "customerQuery": {
+      "success": true,
+      "data": {
+        "name": "Sarah Johnson",
+        "email": "sarah.johnson@email.com",
+        "phone": "+1-555-0123",
+        "loyaltyStatus": "gold",
+        "totalBookings": 3,
+        "lastBookingDate": "2024-01-15",
+        "preferences": {
+          "preferredActivities": ["northern-lights", "wildlife-viewing"],
+          "accommodationType": "luxury"
+        },
+        "vipStatus": true
+      }
+    },
+    "bookingQuery": {
+      "success": true,
+      "data": [
+        {
+          "id": "book_001",
+          "tourName": "Northern Lights Photography Expedition",
+          "status": "confirmed",
+          "departureDate": "2024-12-15",
+          "totalCost": 5850,
+          "paymentStatus": "paid"
+        }
+      ]
+    },
+    "ticketCreate": {
+      "success": true,
+      "data": {
+        "ticketId": "AS-1709123456789",
+        "status": "created",
+        "message": "Support ticket created successfully"
+      }
+    },
+    "customerUpdate": {
+      "success": true,
+      "data": {
+        "updated": true,
+        "message": "Customer record updated successfully"
+      }
+    }
+  },
+  "testScenarios": [
+    {
+      "name": "Email Inquiry - Existing Customer",
+      "input": {
+        "from": "sarah.johnson@email.com",
+        "subject": "Question about my Northern Lights tour",
+        "text": "Hi, I'm wondering about the weather conditions for my Northern Lights tour in December. Should I bring any special gear?"
+      },
+      "expectedBehavior": [
+        "Query customer data via MongoDB API",
+        "Retrieve booking information",
+        "Generate personalized response with weather info",
+        "Create support ticket",
+        "Send email response",
+        "Update customer record"
+      ]
+    },
+    {
+      "name": "Webhook Request - New Customer",
+      "input": {
+        "body": {
+          "email": "new.customer@email.com",
+          "name": "John Doe",
+          "subject": "Arctic expedition inquiry",
+          "message": "I'm interested in a 7-day Arctic expedition. What options do you have available?"
+        }
+      },
+      "expectedBehavior": [
+        "Attempt customer lookup (returns empty)",
+        "Generate response for new customer",
+        "Provide general Arctic expedition information",
+        "Create support ticket for new lead",
+        "Send welcome email with tour options"
+      ]
+    },
+    {
+      "name": "VIP Customer - Urgent Request",
+      "input": {
+        "from": "emma.rodriguez@email.com",
+        "subject": "URGENT: Need to modify my cruise booking",
+        "text": "I need to change my Midnight Sun cruise dates due to a family emergency. Can you help me reschedule?"
+      },
+      "expectedBehavior": [
+        "Identify VIP customer status",
+        "Retrieve active booking information",
+        "Provide immediate assistance",
+        "Create high-priority ticket",
+        "Send empathetic response with options",
+        "Escalate to human agent if needed"
+      ]
+    }
+  ]
+} 

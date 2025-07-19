@@ -1,0 +1,110 @@
+<svg width="800" height="400" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#764ba2;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f093fb;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="ecommerceGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f97316;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#ea580c;stop-opacity:0.6" />
+    </linearGradient>
+  </defs>
+  
+  <rect width="800" height="400" fill="url(#bgGradient)"/>
+  
+  <!-- Professional silhouette -->
+  <g transform="translate(120, 200)">
+    <ellipse cx="0" cy="-80" rx="22" ry="28" fill="#000000"/>
+    <path d="M-22,-95 Q0,-105 22,-95 Q20,-80 0,-85 Q-20,-80 -22,-95" fill="#000000"/>
+    <rect x="-7" y="-52" width="14" height="18" fill="#000000"/>
+    <path d="M-32,-35 Q-35,-20 -32,0 L-32,35 L32,35 L32,0 Q35,-20 32,-35 Q28,-45 18,-45 L-18,-45 Q-28,-45 -32,-35" fill="#000000"/>
+    <ellipse cx="-45" cy="-10" rx="10" ry="25" fill="#000000"/>
+    <ellipse cx="45" cy="-10" rx="10" ry="25" fill="#000000"/>
+  </g>
+  
+  <!-- Shopping cart -->
+  <g transform="translate(350, 180)" opacity="0.9">
+    <path d="M-20,0 L-15,-10 L15,-10 L20,0 L15,20 L-15,20 Z" fill="rgba(255,255,255,0.8)"/>
+    <path d="M-15,-10 L-10,-15 L10,-15 L15,-10" fill="rgba(255,255,255,0.6)"/>
+    <circle cx="-8" cy="25" r="3" fill="url(#ecommerceGradient)"/>
+    <circle cx="8" cy="25" r="3" fill="url(#ecommerceGradient)"/>
+    <rect x="-10" y="-5" width="20" height="15" fill="url(#ecommerceGradient)" opacity="0.7"/>
+  </g>
+  
+  <!-- Tech stack layers -->
+  <g transform="translate(500, 200)" opacity="0.8">
+    <!-- Frontend -->
+    <rect x="-40" y="-30" width="80" height="15" rx="3" fill="rgba(255,255,255,0.8)"/>
+    <text x="0" y="-20" text-anchor="middle" fill="url(#ecommerceGradient)" font-size="10" font-weight="bold">Frontend</text>
+    
+    <!-- Backend -->
+    <rect x="-40" y="-10" width="80" height="15" rx="3" fill="rgba(255,255,255,0.7)"/>
+    <text x="0" y="0" text-anchor="middle" fill="url(#ecommerceGradient)" font-size="10" font-weight="bold">Backend</text>
+    
+    <!-- Database -->
+    <rect x="-40" y="10" width="80" height="15" rx="3" fill="rgba(255,255,255,0.6)"/>
+    <text x="0" y="20" text-anchor="middle" fill="url(#ecommerceGradient)" font-size="10" font-weight="bold">Database</text>
+    
+    <!-- Payment -->
+    <rect x="-40" y="30" width="80" height="15" rx="3" fill="rgba(255,255,255,0.5)"/>
+    <text x="0" y="40" text-anchor="middle" fill="url(#ecommerceGradient)" font-size="10" font-weight="bold">Payment</text>
+  </g>
+  
+  <!-- Payment processing -->
+  <g transform="translate(600, 150)" opacity="0.8">
+    <rect x="-15" y="-10" width="30" height="20" rx="3" fill="rgba(255,255,255,0.8)"/>
+    <rect x="-12" y="-7" width="24" height="3" fill="url(#ecommerceGradient)"/>
+    <rect x="-12" y="-2" width="15" height="2" fill="url(#ecommerceGradient)" opacity="0.7"/>
+    <rect x="-12" y="2" width="20" height="2" fill="url(#ecommerceGradient)" opacity="0.7"/>
+    <text x="0" y="25" text-anchor="middle" fill="#ffffff" font-size="10">Payment</text>
+  </g>
+  
+  <!-- Product items -->
+  <g opacity="0.7">
+    <g transform="translate(250, 120)">
+      <rect x="-8" y="-8" width="16" height="16" rx="2" fill="rgba(255,255,255,0.8)"/>
+      <rect x="-6" y="-6" width="12" height="8" fill="url(#ecommerceGradient)" opacity="0.7"/>
+      <rect x="-6" y="0" width="12" height="2" fill="url(#ecommerceGradient)" opacity="0.5"/>
+      <animate attributeName="transform" values="translate(250, 120); translate(250, 100); translate(250, 120)" dur="3s" repeatCount="indefinite"/>
+    </g>
+    
+    <g transform="translate(650, 280)">
+      <rect x="-8" y="-8" width="16" height="16" rx="2" fill="rgba(255,255,255,0.8)"/>
+      <circle cx="0" cy="-2" r="4" fill="url(#ecommerceGradient)" opacity="0.7"/>
+      <rect x="-6" y="2" width="12" height="2" fill="url(#ecommerceGradient)" opacity="0.5"/>
+      <animate attributeName="transform" values="translate(650, 280); translate(650, 260); translate(650, 280)" dur="4s" repeatCount="indefinite"/>
+    </g>
+  </g>
+  
+  <!-- Data flow -->
+  <g opacity="0.5">
+    <path d="M370,180 Q450,150 480,180" fill="none" stroke="url(#ecommerceGradient)" stroke-width="2" stroke-dasharray="5,5">
+      <animate attributeName="stroke-dashoffset" values="0;-10" dur="2s" repeatCount="indefinite"/>
+    </path>
+    <path d="M520,180 Q560,160 580,150" fill="none" stroke="url(#ecommerceGradient)" stroke-width="2" stroke-dasharray="5,5">
+      <animate attributeName="stroke-dashoffset" values="0;-10" dur="2.5s" repeatCount="indefinite"/>
+    </path>
+  </g>
+  
+  <!-- Abstract elements -->
+  <g opacity="0.3">
+    <circle cx="700" cy="320" r="25" fill="none" stroke="#ffffff" stroke-width="1"/>
+    <rect x="80" y="80" width="30" height="30" fill="none" stroke="#ffffff" stroke-width="1" transform="rotate(45 95 95)"/>
+  </g>
+  
+  <!-- Floating particles -->
+  <g opacity="0.5">
+    <circle cx="300" cy="250" r="2" fill="#ffffff">
+      <animate attributeName="cy" values="250;230;250" dur="3s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="550" cy="300" r="1.5" fill="#f97316">
+      <animate attributeName="cy" values="300;280;300" dur="4s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  
+  <rect x="0" y="0" width="800" height="80" fill="rgba(0,0,0,0.4)"/>
+  <text x="400" y="50" text-anchor="middle" fill="#ffffff" font-family="Arial, sans-serif" font-size="32" font-weight="bold">
+    E-commerce Stack
+  </text>
+</svg> 

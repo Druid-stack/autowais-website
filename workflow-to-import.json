@@ -1,0 +1,162 @@
+{
+  "name": "Simple Blog & LinkedIn - Immediate Post",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [200, 300],
+      "id": "manual-trigger-001"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "todayDate",
+              "name": "todayDate",
+              "value": "={{ $now.format('YYYY-MM-DD') }}",
+              "type": "string"
+            },
+            {
+              "id": "businessTopics",
+              "name": "businessTopics",
+              "value": "[\"AI Automation for Business Growth\", \"Digital Transformation Strategies\", \"Workflow Optimization Tips\", \"Business Intelligence Insights\", \"API Integration Benefits\"]",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "name": "Setup Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [400, 300],
+      "id": "setup-data-001"
+    },
+    {
+      "parameters": {
+        "resource": "chat",
+        "operation": "message",
+        "modelId": "gpt-4",
+        "messages": {
+          "values": [
+            {
+              "role": "system",
+              "content": "You are a professional content writer for Autowais, a company specializing in automation and digital transformation. Create engaging, value-driven content that positions Autowais as a thought leader."
+            },
+            {
+              "role": "user", 
+              "content": "Create a compelling blog post for LinkedIn about one of these topics: {{ JSON.parse($json.businessTopics) }}\n\nRequirements:\n- 500-700 words\n- Professional yet conversational tone\n- Include 2-3 actionable insights\n- Focus on business value and ROI\n- Mention how automation can help\n\nProvide the output in JSON format:\n{\n  \"title\": \"Engaging title here\",\n  \"content\": \"Full blog post content\",\n  \"excerpt\": \"150-character summary\",\n  \"linkedinPost\": \"LinkedIn-optimized version (1200-1500 chars) with emojis and hashtags\"\n}"
+            }
+          ]
+        },
+        "options": {
+          "temperature": 0.7,
+          "maxTokens": 1500
+        }
+      },
+      "name": "Generate Content",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1.1,
+      "position": [600, 300],
+      "credentials": {
+        "openAiApi": {
+          "id": "1",
+          "name": "OpenAI API"
+        }
+      },
+      "id": "generate-content-001"
+    },
+    {
+      "parameters": {
+        "authentication": "standard",
+        "resource": "post",
+        "postAs": "person",
+        "person": "={{ $vars.LINKEDIN_PERSON_ID || 'urn:li:person:YOUR_PERSON_ID' }}",
+        "text": "={{ JSON.parse($json.choices[0].message.content).linkedinPost }}"
+      },
+      "name": "Post to LinkedIn",
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [800, 300],
+      "credentials": {
+        "linkedInOAuth2Api": {
+          "id": "2",
+          "name": "LinkedIn OAuth2"
+        }
+      },
+      "id": "post-linkedin-001"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "result",
+              "name": "result",
+              "value": "={\n  \"success\": true,\n  \"date\": \"{{ $('Setup Data').item.json.todayDate }}\",\n  \"title\": \"{{ JSON.parse($('Generate Content').item.json.choices[0].message.content).title }}\",\n  \"linkedinUrl\": \"https://www.linkedin.com/feed/update/{{ $('Post to LinkedIn').item.json.id }}\",\n  \"message\": \"Content posted successfully to LinkedIn!\"\n}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "name": "Success Result",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [1000, 300],
+      "id": "success-result-001"
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Setup Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Setup Data": {
+      "main": [
+        [
+          {
+            "node": "Generate Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Content": {
+      "main": [
+        [
+          {
+            "node": "Post to LinkedIn",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post to LinkedIn": {
+      "main": [
+        [
+          {
+            "node": "Success Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true
+  }
+} 

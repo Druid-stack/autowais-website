@@ -1,0 +1,26 @@
+{
+  "parameters": {
+    "authentication": "oAuth2",
+    "select": "channel",
+    "channelId": {
+      "__rl": true,
+      "value": "C095W5Y1V1R",
+      "mode": "list",
+      "cachedResultName": "blogs-test"
+    },
+    "text": "🤖 **AI Content Ready for Approval** - {{ $('Initialize Session').item.json.todayDate || 'Today' }}\n\n**📊 Content Summary:**\n• Topic: {{ $('Content Strategy AI Agent').item.json.output ? (JSON.parse($('Content Strategy AI Agent').item.json.output).recommendedTopic || 'AI & Business Automation') : 'AI & Business Automation' }}\n• Research Score: {{ $('Research AI Agent').item.json.output ? (JSON.parse($('Research AI Agent').item.json.output).researchAccuracy || '85') : '85' }}/100\n• SEO Score: {{ $('Content Generation AI Agent').item.json.output ? (JSON.parse($('Content Generation AI Agent').item.json.output).seoScore || '80') : '80' }}/100\n• Quality Score: {{ $('Quality Assurance AI Agent').item.json.output ? (JSON.parse($('Quality Assurance AI Agent').item.json.output).qualityScore || '85') : '85' }}/100\n\n**📖 Blog Title:**\n{{ $('Content Generation AI Agent').item.json.output ? (JSON.parse($('Content Generation AI Agent').item.json.output).title || 'AI-Powered Content Creation') : 'AI-Powered Content Creation' }}\n\n**💼 LinkedIn Post Preview:**\n{{ $('LinkedIn Optimization AI Agent').item.json.output ? (JSON.parse($('LinkedIn Optimization AI Agent').item.json.output).linkedinPost || 'LinkedIn content will be published') : 'LinkedIn content will be published' }}\n\n**✅ AI Recommendation:**\n{{ $('Quality Assurance AI Agent').item.json.output ? (JSON.parse($('Quality Assurance AI Agent').item.json.output).approvalRecommendation || 'APPROVE') : 'APPROVE' }}\n\n**💬 Actions:**\n✅ Reply: `APPROVE-{{ $('Initialize Session').item.json.approvalId || 'DEFAULT' }}` to publish\n❌ Reply: `REJECT-{{ $('Initialize Session').item.json.approvalId || 'DEFAULT' }}` to skip\n\n**Session:** {{ $('Initialize Session').item.json.sessionId || 'session-' + $now.format('HHmmss') }}",
+    "otherOptions": {}
+  },
+  "name": "Request Human Approval (Fixed)",
+  "type": "n8n-nodes-base.slack",
+  "typeVersion": 2.1,
+  "position": [4660, 4580],
+  "id": "05a03a5e-ba41-4d6d-8498-b67ce5f64dc7",
+  "webhookId": "b6581910-afe3-41d6-a496-9dc0ef53a4b0",
+  "credentials": {
+    "slackOAuth2Api": {
+      "id": "gxDWyHK4Pm0DriHc",
+      "name": "Slack account"
+    }
+  }
+} 

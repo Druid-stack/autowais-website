@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArticShorex AI Agent Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/date-fns@2.29.3/index.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo h1 {
+            color: #2a5298;
+            font-size: 1.8rem;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: #e8f5e8;
+            border-radius: 20px;
+            border: 2px solid #4caf50;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            background: #4caf50;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .dashboard-container {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #2a5298;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-label {
+            color: #666;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .metric-trend {
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .trend-up {
+            color: #4caf50;
+        }
+
+        .trend-down {
+            color: #f44336;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .chart-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #2a5298;
+        }
+
+        .activity-feed {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .activity-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #eee;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #2a5298;
+        }
+
+        .activity-item {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .activity-icon.email {
+            background: #2196F3;
+        }
+
+        .activity-icon.webhook {
+            background: #FF9800;
+        }
+
+        .activity-icon.urgent {
+            background: #F44336;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: bold;
+            margin-bottom: 0.3rem;
+        }
+
+        .activity-meta {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .activity-time {
+            font-size: 0.8rem;
+            color: #999;
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .control-group label {
+            color: white;
+            font-weight: bold;
+        }
+
+        .control-group select,
+        .control-group input {
+            padding: 0.5rem;
+            border: none;
+            border-radius: 5px;
+            background: white;
+        }
+
+        .refresh-btn {
+            background: #4caf50;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .refresh-btn:hover {
+            background: #45a049;
+        }
+
+        .performance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .performance-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .performance-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #2a5298;
+        }
+
+        .performance-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .performance-item:last-child {
+            border-bottom: none;
+        }
+
+        .performance-label {
+            color: #666;
+        }
+
+        .performance-value {
+            font-weight: bold;
+            color: #2a5298;
+        }
+
+        .alert-panel {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .alert-title {
+            font-weight: bold;
+            color: #856404;
+            margin-bottom: 0.5rem;
+        }
+
+        .alert-message {
+            color: #856404;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .customer-insights {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .insights-header {
+            background: #f8f9fa;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #eee;
+            font-weight: bold;
+            color: #2a5298;
+        }
+
+        .insights-content {
+            padding: 1.5rem;
+        }
+
+        .insight-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .insight-item:last-child {
+            border-bottom: none;
+        }
+
+        .insight-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .insight-value {
+            font-weight: bold;
+            color: #2a5298;
+        }
+
+        @media (max-width: 768px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+            
+            .controls {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <h1>ArticShorex AI Dashboard</h1>
+            <span style="color: #666;">Real-time Agent Monitoring</span>
+        </div>
+        <div class="status-indicator">
+            <div class="status-dot"></div>
+            <span>AI Agent Online</span>
+        </div>
+    </div>
+
+    <div class="dashboard-container">
+        <div class="controls">
+            <div class="control-group">
+                <label>Time Range:</label>
+                <select id="timeRange">
+                    <option value="1h">Last Hour</option>
+                    <option value="24h" selected>Last 24 Hours</option>
+                    <option value="7d">Last 7 Days</option>
+                    <option value="30d">Last 30 Days</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Auto Refresh:</label>
+                <select id="autoRefresh">
+                    <option value="0">Off</option>
+                    <option value="30" selected>30 seconds</option>
+                    <option value="60">1 minute</option>
+                    <option value="300">5 minutes</option>
+                </select>
+            </div>
+            <button class="refresh-btn" onclick="refreshDashboard()">🔄 Refresh Now</button>
+        </div>
+
+        <div id="alertPanel" class="alert-panel hidden">
+            <div class="alert-title">⚠️ System Alert</div>
+            <div class="alert-message" id="alertMessage"></div>
+        </div>
+
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-value" id="totalReplies">0</div>
+                <div class="metric-label">Total Replies</div>
+                <div class="metric-trend trend-up" id="repliesTrend">↗️ +15% from yesterday</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="avgResponseTime">0s</div>
+                <div class="metric-label">Avg Response Time</div>
+                <div class="metric-trend trend-up" id="responseTimeTrend">↗️ 0.3s faster</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="resolutionRate">0%</div>
+                <div class="metric-label">Resolution Rate</div>
+                <div class="metric-trend trend-up" id="resolutionTrend">↗️ +2.5%</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="aiConfidence">0%</div>
+                <div class="metric-label">AI Confidence</div>
+                <div class="metric-trend trend-up" id="confidenceTrend">↗️ +1.2%</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="customerSatisfaction">0.0</div>
+                <div class="metric-label">Customer Satisfaction</div>
+                <div class="metric-trend trend-up" id="satisfactionTrend">↗️ +0.2 points</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="escalationRate">0%</div>
+                <div class="metric-label">Escalation Rate</div>
+                <div class="metric-trend trend-down" id="escalationTrend">↘️ -3.1%</div>
+            </div>
+        </div>
+
+        <div class="charts-grid">
+            <div class="chart-container">
+                <div class="chart-title">📈 Reply Volume & Response Times</div>
+                <canvas id="volumeChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <div class="chart-title">🎯 Intent Categories</div>
+                <canvas id="intentChart"></canvas>
+            </div>
+        </div>
+
+        <div class="performance-grid">
+            <div class="performance-card">
+                <div class="performance-title">🤖 AI Performance Metrics</div>
+                <div class="performance-item">
+                    <span class="performance-label">Model Accuracy</span>
+                    <span class="performance-value">96.8%</span>
+                </div>
+                <div class="performance-item">
+                    <span class="performance-label">Intent Recognition</span>
+                    <span class="performance-value">94.2%</span>
+                </div>
+                <div class="performance-item">
+                    <span class="performance-label">Sentiment Analysis</span>
+                    <span class="performance-value">92.5%</span>
+                </div>
+                <div class="performance-item">
+                    <span class="performance-label">Response Quality</span>
+                    <span class="performance-value">95.1%</span>
+                </div>
+            </div>
+
+            <div class="performance-card">
+                <div class="performance-title">📊 Channel Performance</div>
+                <div class="performance-item">
+                    <span class="performance-label">Email Replies</span>
+                    <span class="performance-value">847</span>
+                </div>
+                <div class="performance-item">
+                    <span class="performance-label">Webhook Requests</span>
+                    <span class="performance-value">234</span>
+                </div>
+                <div class="performance-item">
+                    <span class="performance-label">API Success Rate</span>
+                    <span class="performance-value">99.2%</span>
+                </div>
+                <div class="performance-item">
+                    <span class="performance-label">Database Queries</span>
+                    <span class="performance-value">1,081</span>
+                </div>
+            </div>
+
+            <div class="customer-insights">
+                <div class="insights-header">👥 Customer Insights</div>
+                <div class="insights-content">
+                    <div class="insight-item">
+                        <span class="insight-label">VIP Customers Served</span>
+                        <span class="insight-value">23</span>
+                    </div>
+                    <div class="insight-item">
+                        <span class="insight-label">New Customers</span>
+                        <span class="insight-value">67</span>
+                    </div>
+                    <div class="insight-item">
+                        <span class="insight-label">Repeat Inquiries</span>
+                        <span class="insight-value">12%</span>
+                    </div>
+                    <div class="insight-item">
+                        <span class="insight-label">Booking Modifications</span>
+                        <span class="insight-value">45</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="charts-grid">
+            <div class="chart-container">
+                <div class="chart-title">😊 Sentiment Analysis</div>
+                <canvas id="sentimentChart"></canvas>
+            </div>
+            <div class="activity-feed">
+                <div class="activity-header">🕐 Recent AI Agent Activity</div>
+                <div id="activityFeed">
+                    <!-- Activity items will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dashboard Data Management
+        class ArticShorexDashboard {
+            constructor() {
+                this.charts = {};
+                this.refreshInterval = null;
+                this.mockData = this.generateMockData();
+                this.initializeCharts();
+                this.updateMetrics();
+                this.populateActivityFeed();
+                this.setupEventListeners();
+                this.startAutoRefresh();
+            }
+
+            generateMockData() {
+                const now = new Date();
+                const hours = Array.from({length: 24}, (_, i) => {
+                    const time = new Date(now.getTime() - (23 - i) * 60 * 60 * 1000);
+                    return {
+                        time: time.toISOString(),
+                        replies: Math.floor(Math.random() * 50) + 20,
+                        responseTime: Math.random() * 3 + 0.5,
+                        confidence: Math.random() * 10 + 90,
+                        satisfaction: Math.random() * 1 + 4
+                    };
+                });
+
+                return {
+                    hourlyData: hours,
+                    totalReplies: 1081,
+                    avgResponseTime: 1.2,
+                    resolutionRate: 94.7,
+                    aiConfidence: 95.3,
+                    customerSatisfaction: 4.6,
+                    escalationRate: 5.3,
+                    intentCategories: {
+                        'Weather Inquiry': 35,
+                        'Booking Modification': 28,
+                        'Tour Information': 22,
+                        'Payment Issues': 8,
+                        'General Support': 7
+                    },
+                    sentimentData: {
+                        'Positive': 65,
+                        'Neutral': 28,
+                        'Negative': 5,
+                        'Urgent': 2
+                    },
+                    recentActivity: [
+                        {
+                            type: 'email',
+                            customer: 'Sarah Johnson',
+                            subject: 'Weather conditions for Northern Lights tour',
+                            status: 'resolved',
+                            time: new Date(now.getTime() - 2 * 60 * 1000),
+                            confidence: 0.96,
+                            responseTime: 1.1
+                        },
+                        {
+                            type: 'webhook',
+                            customer: 'Michael Chen',
+                            subject: 'Arctic expedition availability',
+                            status: 'resolved',
+                            time: new Date(now.getTime() - 5 * 60 * 1000),
+                            confidence: 0.94,
+                            responseTime: 0.8
+                        },
+                        {
+                            type: 'urgent',
+                            customer: 'Emma Rodriguez',
+                            subject: 'Emergency booking modification',
+                            status: 'escalated',
+                            time: new Date(now.getTime() - 8 * 60 * 1000),
+                            confidence: 0.92,
+                            responseTime: 0.6
+                        }
+                    ]
+                };
+            }
+
+            initializeCharts() {
+                this.initVolumeChart();
+                this.initIntentChart();
+                this.initSentimentChart();
+            }
+
+            initVolumeChart() {
+                const ctx = document.getElementById('volumeChart').getContext('2d');
+                this.charts.volume = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: this.mockData.hourlyData.map(d => 
+                            new Date(d.time).toLocaleTimeString('en-US', { 
+                                hour: '2-digit', 
+                                minute: '2-digit' 
+                            })
+                        ),
+                        datasets: [{
+                            label: 'Replies',
+                            data: this.mockData.hourlyData.map(d => d.replies),
+                            borderColor: '#2a5298',
+                            backgroundColor: 'rgba(42, 82, 152, 0.1)',
+                            fill: true,
+                            tension: 0.4,
+                            yAxisID: 'y'
+                        }, {
+                            label: 'Response Time (s)',
+                            data: this.mockData.hourlyData.map(d => d.responseTime),
+                            borderColor: '#ff6b6b',
+                            backgroundColor: 'rgba(255, 107, 107, 0.1)',
+                            fill: false,
+                            tension: 0.4,
+                            yAxisID: 'y1'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        interaction: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        scales: {
+                            y: {
+                                type: 'linear',
+                                display: true,
+                                position: 'left',
+                                title: {
+                                    display: true,
+                                    text: 'Number of Replies'
+                                }
+                            },
+                            y1: {
+                                type: 'linear',
+                                display: true,
+                                position: 'right',
+                                title: {
+                                    display: true,
+                                    text: 'Response Time (seconds)'
+                                },
+                                grid: {
+                                    drawOnChartArea: false,
+                                },
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: true
+                            }
+                        }
+                    }
+                });
+            }
+
+            initIntentChart() {
+                const ctx = document.getElementById('intentChart').getContext('2d');
+                this.charts.intent = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(this.mockData.intentCategories),
+                        datasets: [{
+                            data: Object.values(this.mockData.intentCategories),
+                            backgroundColor: [
+                                '#2a5298',
+                                '#4caf50',
+                                '#ff9800',
+                                '#f44336',
+                                '#9c27b0'
+                            ],
+                            borderWidth: 2,
+                            borderColor: '#fff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+            }
+
+            initSentimentChart() {
+                const ctx = document.getElementById('sentimentChart').getContext('2d');
+                this.charts.sentiment = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: Object.keys(this.mockData.sentimentData),
+                        datasets: [{
+                            label: 'Sentiment Distribution',
+                            data: Object.values(this.mockData.sentimentData),
+                            backgroundColor: [
+                                '#4caf50',
+                                '#2196f3',
+                                '#ff9800',
+                                '#f44336'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Percentage (%)'
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        }
+                    }
+                });
+            }
+
+            updateMetrics() {
+                document.getElementById('totalReplies').textContent = this.mockData.totalReplies.toLocaleString();
+                document.getElementById('avgResponseTime').textContent = this.mockData.avgResponseTime.toFixed(1) + 's';
+                document.getElementById('resolutionRate').textContent = this.mockData.resolutionRate.toFixed(1) + '%';
+                document.getElementById('aiConfidence').textContent = this.mockData.aiConfidence.toFixed(1) + '%';
+                document.getElementById('customerSatisfaction').textContent = this.mockData.customerSatisfaction.toFixed(1);
+                document.getElementById('escalationRate').textContent = this.mockData.escalationRate.toFixed(1) + '%';
+            }
+
+            populateActivityFeed() {
+                const feed = document.getElementById('activityFeed');
+                feed.innerHTML = '';
+
+                this.mockData.recentActivity.forEach(activity => {
+                    const item = document.createElement('div');
+                    item.className = 'activity-item';
+                    
+                    const timeAgo = this.getTimeAgo(activity.time);
+                    const statusColor = activity.status === 'resolved' ? '#4caf50' : '#ff9800';
+                    
+                    item.innerHTML = `
+                        <div class="activity-icon ${activity.type}">
+                            ${activity.type === 'email' ? '📧' : activity.type === 'webhook' ? '🔗' : '🚨'}
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">${activity.customer}</div>
+                            <div class="activity-meta">
+                                ${activity.subject} • 
+                                <span style="color: ${statusColor}; font-weight: bold;">${activity.status.toUpperCase()}</span> • 
+                                ${(activity.responseTime * 1000).toFixed(0)}ms • 
+                                ${(activity.confidence * 100).toFixed(1)}% confidence
+                            </div>
+                        </div>
+                        <div class="activity-time">${timeAgo}</div>
+                    `;
+                    
+                    feed.appendChild(item);
+                });
+            }
+
+            getTimeAgo(date) {
+                const now = new Date();
+                const diffMs = now - date;
+                const diffMins = Math.floor(diffMs / 60000);
+                
+                if (diffMins < 1) return 'Just now';
+                if (diffMins < 60) return `${diffMins}m ago`;
+                
+                const diffHours = Math.floor(diffMins / 60);
+                if (diffHours < 24) return `${diffHours}h ago`;
+                
+                const diffDays = Math.floor(diffHours / 24);
+                return `${diffDays}d ago`;
+            }
+
+            setupEventListeners() {
+                document.getElementById('timeRange').addEventListener('change', (e) => {
+                    this.updateTimeRange(e.target.value);
+                });
+
+                document.getElementById('autoRefresh').addEventListener('change', (e) => {
+                    this.setAutoRefresh(parseInt(e.target.value));
+                });
+            }
+
+            updateTimeRange(range) {
+                // In a real implementation, this would fetch new data based on the time range
+                console.log('Updating time range to:', range);
+                this.showAlert('Time range updated to: ' + range);
+            }
+
+            setAutoRefresh(seconds) {
+                if (this.refreshInterval) {
+                    clearInterval(this.refreshInterval);
+                }
+
+                if (seconds > 0) {
+                    this.refreshInterval = setInterval(() => {
+                        this.refreshDashboard();
+                    }, seconds * 1000);
+                }
+            }
+
+            startAutoRefresh() {
+                this.setAutoRefresh(30); // Default 30 seconds
+            }
+
+            refreshDashboard() {
+                // Simulate data refresh
+                this.mockData = this.generateMockData();
+                this.updateMetrics();
+                this.populateActivityFeed();
+                
+                // Update charts
+                Object.values(this.charts).forEach(chart => {
+                    if (chart.data && chart.data.datasets) {
+                        chart.data.datasets.forEach(dataset => {
+                            // Add some variation to existing data
+                            dataset.data = dataset.data.map(value => 
+                                value + (Math.random() - 0.5) * value * 0.1
+                            );
+                        });
+                        chart.update();
+                    }
+                });
+
+                this.showAlert('Dashboard refreshed successfully', 'success');
+            }
+
+            showAlert(message, type = 'info') {
+                const alertPanel = document.getElementById('alertPanel');
+                const alertMessage = document.getElementById('alertMessage');
+                
+                alertMessage.textContent = message;
+                alertPanel.classList.remove('hidden');
+                
+                setTimeout(() => {
+                    alertPanel.classList.add('hidden');
+                }, 3000);
+            }
+        }
+
+        // Global function for refresh button
+        function refreshDashboard() {
+            if (window.dashboard) {
+                window.dashboard.refreshDashboard();
+            }
+        }
+
+        // Initialize dashboard when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            window.dashboard = new ArticShorexDashboard();
+        });
+
+        // Handle page visibility changes
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                // Pause auto-refresh when tab is not visible
+                if (window.dashboard && window.dashboard.refreshInterval) {
+                    clearInterval(window.dashboard.refreshInterval);
+                }
+            } else {
+                // Resume auto-refresh when tab becomes visible
+                if (window.dashboard) {
+                    window.dashboard.startAutoRefresh();
+                }
+            }
+        });
+    </script>
+</body>
+</html> 

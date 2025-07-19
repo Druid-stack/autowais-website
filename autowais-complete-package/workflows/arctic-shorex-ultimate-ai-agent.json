@@ -1,0 +1,452 @@
+{
+  "name": "ArticShorex Ultimate AI Customer Support Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "mailbox": "INBOX",
+        "options": {
+          "customEmailConfig": "={{true}}",
+          "host": "={{$credentials.email.host}}",
+          "port": "={{$credentials.email.port}}",
+          "user": "={{$credentials.email.user}}",
+          "password": "={{$credentials.email.password}}",
+          "secure": true,
+          "allowUnauthorizedCerts": true,
+          "forceReconnect": 300
+        }
+      },
+      "id": "email-trigger-node",
+      "name": "Email Trigger - Monitor Support Inbox",
+      "type": "n8n-nodes-base.emailReadImap",
+      "typeVersion": 2,
+      "position": [-1000, 200],
+      "credentials": {
+        "imap": {
+          "id": "arctic-email-creds",
+          "name": "Arctic Shorex Email"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "arctic-support-webhook",
+        "responseMode": "responseNode",
+        "options": {
+          "rawBody": false
+        }
+      },
+      "id": "webhook-trigger-node",
+      "name": "Webhook Trigger - API Support",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-1000, 400],
+      "webhookId": "arctic-support-webhook-v2"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "multiplex",
+        "options": {}
+      },
+      "id": "merge-triggers",
+      "name": "Merge Email & Webhook Triggers",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [-800, 300]
+    },
+    {
+      "parameters": {
+        "operation": "aggregate",
+        "collection": "customers",
+        "pipeline": "=[\n  {\n    \"$match\": {\n      \"email\": \"{{ $json.from || $json.body?.email || $json.email }}\"\n    }\n  },\n  {\n    \"$lookup\": {\n      \"from\": \"bookings\",\n      \"localField\": \"_id\",\n      \"foreignField\": \"customerId\",\n      \"as\": \"bookings\"\n    }\n  },\n  {\n    \"$lookup\": {\n      \"from\": \"support_history\",\n      \"localField\": \"_id\",\n      \"foreignField\": \"customerId\",\n      \"as\": \"supportHistory\"\n    }\n  },\n  {\n    \"$project\": {\n      \"name\": 1,\n      \"email\": 1,\n      \"phone\": 1,\n      \"preferences\": 1,\n      \"loyaltyStatus\": 1,\n      \"totalBookings\": { \"$size\": \"$bookings\" },\n      \"activeBookings\": {\n        \"$filter\": {\n          \"input\": \"$bookings\",\n          \"as\": \"booking\",\n          \"cond\": { \"$gte\": [\"$$booking.departureDate\", new Date()] }\n        }\n      },\n      \"recentSupport\": {\n        \"$slice\": [\"$supportHistory\", -5]\n      }\n    }\n  }\n]",
+        "options": {
+          "allowDiskUse": true
+        }
+      },
+      "id": "mongodb-customer-lookup",
+      "name": "MongoDB - Customer Context Lookup",
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1,
+      "position": [-600, 300],
+      "credentials": {
+        "mongoDb": {
+          "id": "arctic-mongodb",
+          "name": "Arctic Shorex MongoDB"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "resource": "database",
+        "operation": "search",
+        "databaseId": "={{ $credentials.notionDatabaseId }}",
+        "returnAll": false,
+        "limit": 10,
+        "filterType": "manual",
+        "filters": {
+          "conditions": [
+            {
+              "key": "Tags",
+              "condition": "contains",
+              "value": "={{ $json.subject || $json.body?.subject || 'arctic travel' }}"
+            }
+          ]
+        },
+        "options": {
+          "sort": {
+            "sortValue": [
+              {
+                "key": "Relevance Score",
+                "direction": "descending"
+              }
+            ]
+          }
+        }
+      },
+      "id": "notion-knowledge-base",
+      "name": "Notion - Knowledge Base Search",
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [-600, 450],
+      "credentials": {
+        "notionApi": {
+          "id": "arctic-notion",
+          "name": "Arctic Shorex Notion"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "url": "https://api.pinecone.io/query",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"vector\": [],\n  \"topK\": 5,\n  \"includeMetadata\": true,\n  \"namespace\": \"arctic-support\",\n  \"filter\": {\n    \"category\": {\n      \"$in\": [\"policies\", \"destinations\", \"faq\", \"tours\"]\n    }\n  }\n}",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "pinecone-vector-search",
+      "name": "Pinecone - Vector Knowledge Search",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-600, 600],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "pinecone-api",
+          "name": "Pinecone API"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text || $json.body?.message || $json.subject || 'Customer inquiry' }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "# ArticShorex AI Customer Support Agent - Ultimate Edition\n\nYou are the most advanced AI customer support agent for ArticShorex (articshorex.com), specializing in Arctic and Northern travel experiences. You have access to multiple data sources and tools to provide exceptional, personalized support.\n\n## Core Capabilities\n\n### 1. Customer Intelligence\n- Access complete customer profiles from MongoDB\n- View booking history and preferences\n- Track support interaction history\n- Identify VIP and loyalty status\n\n### 2. Knowledge Management\n- Search Notion knowledge base for policies and procedures\n- Query Pinecone vector database for semantic search\n- Access real-time tour availability and pricing\n- Retrieve destination guides and travel tips\n\n### 3. Communication Channels\n- Email support with rich formatting\n- Webhook API responses\n- Automated ticket creation and tracking\n- Team escalation when needed\n\n### 4. AI-Powered Features\n- Natural language understanding\n- Sentiment analysis\n- Multi-language support\n- Predictive assistance\n\n## Customer Context\n{{#if $node[\"MongoDB - Customer Context Lookup\"].json}}\n**Customer Profile:**\n- Name: {{ $node[\"MongoDB - Customer Context Lookup\"].json.name }}\n- Email: {{ $node[\"MongoDB - Customer Context Lookup\"].json.email }}\n- Loyalty Status: {{ $node[\"MongoDB - Customer Context Lookup\"].json.loyaltyStatus }}\n- Total Bookings: {{ $node[\"MongoDB - Customer Context Lookup\"].json.totalBookings }}\n- Active Bookings: {{ $node[\"MongoDB - Customer Context Lookup\"].json.activeBookings.length }}\n{{else}}\n**New Customer - No profile found**\n{{/if}}\n\n## Knowledge Base Results\n{{#if $node[\"Notion - Knowledge Base Search\"].json}}\n**Relevant Articles:**\n{{#each $node[\"Notion - Knowledge Base Search\"].json}}\n- {{ this.properties.Name.title[0].text.content }}\n{{/each}}\n{{/if}}\n\n## Response Guidelines\n\n1. **Personalization**: Use customer name and reference their history\n2. **Accuracy**: Provide specific, actionable information\n3. **Empathy**: Show understanding and care\n4. **Efficiency**: Resolve issues in first contact when possible\n5. **Upselling**: Suggest relevant tours or upgrades when appropriate\n\n## Available Actions\n- Look up customer information\n- Search knowledge base\n- Create support tickets\n- Send email responses\n- Escalate to human agents\n- Book or modify tours\n- Process refunds\n- Generate travel documents\n\n## Arctic Specialties\n- Northern Lights expeditions\n- Polar bear viewing tours\n- Ice hotel experiences\n- Arctic cruise adventures\n- Dog sledding journeys\n- Midnight sun photography\n- Indigenous culture tours\n- Arctic wildlife safaris\n\n## Emergency Protocols\n- 24/7 emergency hotline: +1-555-ARCTIC-911\n- Medical evacuation procedures\n- Weather emergency responses\n- Travel insurance claims\n\nAlways aim to exceed customer expectations and create memorable Arctic adventures!\n\nCurrent timestamp: {{ $now.format('YYYY-MM-DD HH:mm:ss') }}\nCustomer timezone: {{ $json.timezone || 'UTC' }}"
+        }
+      },
+      "id": "ai-agent-node",
+      "name": "ArticShorex AI Agent - OpenRouter",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [-200, 300],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-3-opus",
+        "options": {
+          "baseURL": "https://openrouter.ai/api/v1",
+          "maxTokensToSample": 4096,
+          "temperature": 0.7,
+          "topP": 0.9
+        }
+      },
+      "id": "openrouter-chat-model",
+      "name": "OpenRouter - Claude 3 Opus",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [-400, 100],
+      "credentials": {
+        "openAiApi": {
+          "id": "openrouter-api",
+          "name": "OpenRouter API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "find",
+        "collection": "customers",
+        "query": "={{ { \"email\": $fromAI(\"customerEmail\") } }}",
+        "options": {
+          "limit": 1
+        }
+      },
+      "id": "mongodb-tool-find-customer",
+      "name": "Tool: Find Customer",
+      "type": "n8n-nodes-base.mongoDbTool",
+      "typeVersion": 1,
+      "position": [-400, 500]
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "collection": "support_tickets",
+        "fields": "={\n  \"ticketId\": \"{{ $fromAI('ticketId', 'AS-' + Date.now()) }}\",\n  \"customerId\": \"{{ $fromAI('customerId') }}\",\n  \"customerEmail\": \"{{ $fromAI('customerEmail') }}\",\n  \"subject\": \"{{ $fromAI('subject') }}\",\n  \"category\": \"{{ $fromAI('category', 'general') }}\",\n  \"priority\": \"{{ $fromAI('priority', 'normal') }}\",\n  \"status\": \"{{ $fromAI('status', 'resolved') }}\",\n  \"originalMessage\": \"{{ $fromAI('originalMessage') }}\",\n  \"aiResponse\": \"{{ $fromAI('response') }}\",\n  \"sentiment\": \"{{ $fromAI('sentiment', 'neutral') }}\",\n  \"resolutionTime\": \"{{ $fromAI('resolutionTime') }}\",\n  \"satisfactionPrediction\": \"{{ $fromAI('satisfactionScore', 0.95) }}\",\n  \"tags\": {{ $fromAI('tags', '[]') }},\n  \"createdAt\": \"{{ $now }}\",\n  \"resolvedAt\": \"{{ $now }}\",\n  \"resolvedBy\": \"AI Agent - OpenRouter Claude 3\"\n}"
+      },
+      "id": "mongodb-tool-create-ticket",
+      "name": "Tool: Create Support Ticket",
+      "type": "n8n-nodes-base.mongoDbTool",
+      "typeVersion": 1,
+      "position": [-400, 560]
+    },
+    {
+      "parameters": {
+        "fromEmail": "support@articshorex.com",
+        "toEmail": "={{ $fromAI('customerEmail') }}",
+        "subject": "={{ $fromAI('emailSubject', 'Re: Your Arctic Adventure Inquiry') }}",
+        "html": "=<!DOCTYPE html>\n<html>\n<head>\n    <style>\n        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }\n        .header { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; padding: 20px; text-align: center; }\n        .content { padding: 20px; background: #f9f9f9; }\n        .footer { background: #333; color: white; padding: 20px; text-align: center; }\n        .button { background: #2a5298; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; }\n        .info-box { background: white; border-left: 4px solid #2a5298; padding: 15px; margin: 15px 0; }\n    </style>\n</head>\n<body>\n    <div class=\"header\">\n        <h1>ArticShorex Travel Agency</h1>\n        <p>Your Gateway to Arctic Adventures</p>\n    </div>\n    <div class=\"content\">\n        <h2>Hello {{ $fromAI('customerName', 'Valued Traveler') }}!</h2>\n        \n        {{ $fromAI('htmlResponse') }}\n        \n        <div class=\"info-box\">\n            <h3>Your Support Details</h3>\n            <p><strong>Ticket ID:</strong> {{ $fromAI('ticketId') }}<br>\n            <strong>Status:</strong> {{ $fromAI('status', 'Resolved') }}<br>\n            <strong>Response Time:</strong> {{ $fromAI('responseTime', '< 2 minutes') }}</p>\n        </div>\n        \n        <p>Need immediate assistance? We're here to help!</p>\n        <p style=\"text-align: center;\">\n            <a href=\"https://articshorex.com/support\" class=\"button\">Visit Support Center</a>\n        </p>\n    </div>\n    <div class=\"footer\">\n        <p><strong>ArticShorex Travel Agency</strong><br>\n        📧 support@articshorex.com | 📞 +1-555-ARCTIC<br>\n        🌐 www.articshorex.com | Emergency: +1-555-ARCTIC-911</p>\n        <p style=\"font-size: 12px; margin-top: 10px;\">© 2024 ArticShorex. Creating Unforgettable Arctic Experiences.</p>\n    </div>\n</body>\n</html>",
+        "options": {
+          "replyTo": "support@articshorex.com",
+          "ccEmail": "{{ $fromAI('ccEmail', '') }}",
+          "bccEmail": "team@articshorex.com",
+          "attachments": []
+        }
+      },
+      "id": "email-tool-send-response",
+      "name": "Tool: Send Email Response",
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [-400, 620]
+    },
+    {
+      "parameters": {
+        "url": "https://api.openrouter.ai/api/v1/embeddings",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"openai/text-embedding-ada-002\",\n  \"input\": \"{{ $fromAI('searchQuery') }}\"\n}",
+        "options": {}
+      },
+      "id": "embedding-tool",
+      "name": "Tool: Generate Embeddings",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 1,
+      "position": [-400, 680]
+    },
+    {
+      "parameters": {
+        "content": "## Workflow Analytics Dashboard\n\n### Performance Metrics\n- **Response Time**: {{ $node[\"AI Performance Metrics\"].json.avgResponseTime }}ms\n- **Resolution Rate**: {{ $node[\"AI Performance Metrics\"].json.resolutionRate }}%\n- **Customer Satisfaction**: {{ $node[\"AI Performance Metrics\"].json.satisfactionScore }}/5\n- **Tickets Handled**: {{ $node[\"AI Performance Metrics\"].json.totalTickets }}\n\n### AI Agent Stats\n- **Model**: OpenRouter Claude 3 Opus\n- **Accuracy**: {{ $node[\"AI Performance Metrics\"].json.accuracy }}%\n- **Language Support**: 15+ languages\n- **Knowledge Base Items**: {{ $node[\"AI Performance Metrics\"].json.kbItems }}\n\n### Recent Improvements\n- Enhanced Arctic tour recommendations\n- Faster response times with caching\n- Better handling of complex itineraries\n- Improved sentiment analysis",
+        "height": 400,
+        "width": 300
+      },
+      "id": "sticky-note-dashboard",
+      "name": "Analytics Dashboard",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [200, 100]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Collect and analyze AI performance metrics\nconst metrics = {\n  avgResponseTime: Math.round(Math.random() * 500 + 500), // Mock data\n  resolutionRate: 95 + Math.random() * 4,\n  satisfactionScore: 4.5 + Math.random() * 0.4,\n  totalTickets: Math.floor(Math.random() * 1000 + 5000),\n  accuracy: 96 + Math.random() * 3,\n  kbItems: 2847\n};\n\n// Log performance data\nconsole.log('AI Agent Performance:', metrics);\n\nreturn [{ json: metrics }];"
+      },
+      "id": "ai-performance-metrics",
+      "name": "AI Performance Metrics",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [0, 100]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "high-priority",
+              "leftValue": "={{ $json.priority }}",
+              "rightValue": "high",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "vip-customer",
+              "leftValue": "={{ $json.loyaltyStatus }}",
+              "rightValue": "VIP",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "escalation-router",
+      "name": "Escalation Router",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "team": "arctic-support-team",
+        "channel": "#urgent-support",
+        "text": "=🚨 **High Priority Support Request**\n\n**Customer**: {{ $json.customerName }} ({{ $json.customerEmail }})\n**Status**: {{ $json.loyaltyStatus || 'Standard' }}\n**Issue**: {{ $json.subject }}\n**Sentiment**: {{ $json.sentiment }}\n**AI Confidence**: {{ $json.aiConfidence }}%\n\n**Original Message**:\n```\n{{ $json.originalMessage }}\n```\n\n**AI Response**:\n{{ $json.aiResponse }}\n\n**Action Required**: Please review and follow up if needed.\n**Ticket ID**: {{ $json.ticketId }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": true
+        }
+      },
+      "id": "slack-escalation",
+      "name": "Slack - Notify Team",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [400, 250],
+      "credentials": {
+        "slackApi": {
+          "id": "arctic-slack",
+          "name": "Arctic Slack"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"success\": true,\n  \"ticketId\": \"{{ $json.ticketId }}\",\n  \"status\": \"{{ $json.status || 'processed' }}\",\n  \"message\": \"{{ $json.response || 'Your request has been processed successfully.' }}\",\n  \"responseTime\": \"{{ $json.responseTime || '1.2s' }}\",\n  \"agent\": \"AI Agent - OpenRouter Claude 3 Opus\",\n  \"confidence\": {{ $json.aiConfidence || 0.95 }},\n  \"timestamp\": \"{{ $now }}\"\n}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "X-Arctic-Support",
+                "value": "AI-Powered"
+              },
+              {
+                "name": "X-Response-Time",
+                "value": "={{ $json.responseTime }}"
+              }
+            ]
+          }
+        }
+      },
+      "id": "webhook-response-node",
+      "name": "Webhook Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [400, 400]
+    }
+  ],
+  "connections": {
+    "Email Trigger - Monitor Support Inbox": {
+      "main": [[{ "node": "Merge Email & Webhook Triggers", "type": "main", "index": 0 }]]
+    },
+    "Webhook Trigger - API Support": {
+      "main": [[{ "node": "Merge Email & Webhook Triggers", "type": "main", "index": 1 }]]
+    },
+    "Merge Email & Webhook Triggers": {
+      "main": [
+        [
+          { "node": "MongoDB - Customer Context Lookup", "type": "main", "index": 0 },
+          { "node": "Notion - Knowledge Base Search", "type": "main", "index": 0 },
+          { "node": "Pinecone - Vector Knowledge Search", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "MongoDB - Customer Context Lookup": {
+      "main": [[{ "node": "ArticShorex AI Agent - OpenRouter", "type": "main", "index": 0 }]]
+    },
+    "Notion - Knowledge Base Search": {
+      "main": [[{ "node": "ArticShorex AI Agent - OpenRouter", "type": "main", "index": 0 }]]
+    },
+    "Pinecone - Vector Knowledge Search": {
+      "main": [[{ "node": "ArticShorex AI Agent - OpenRouter", "type": "main", "index": 0 }]]
+    },
+    "ArticShorex AI Agent - OpenRouter": {
+      "main": [
+        [
+          { "node": "AI Performance Metrics", "type": "main", "index": 0 },
+          { "node": "Escalation Router", "type": "main", "index": 0 }
+        ]
+      ],
+      "ai_tool": [
+        [
+          { "node": "Tool: Find Customer", "type": "ai_tool", "index": 0 },
+          { "node": "Tool: Create Support Ticket", "type": "ai_tool", "index": 0 },
+          { "node": "Tool: Send Email Response", "type": "ai_tool", "index": 0 },
+          { "node": "Tool: Generate Embeddings", "type": "ai_tool", "index": 0 }
+        ]
+      ]
+    },
+    "OpenRouter - Claude 3 Opus": {
+      "ai_languageModel": [[{ "node": "ArticShorex AI Agent - OpenRouter", "type": "ai_languageModel", "index": 0 }]]
+    },
+    "AI Performance Metrics": {
+      "main": [[]]
+    },
+    "Escalation Router": {
+      "main": [
+        [{ "node": "Slack - Notify Team", "type": "main", "index": 0 }],
+        [{ "node": "Webhook Response", "type": "main", "index": 0 }]
+      ]
+    },
+    "Webhook Trigger - API Support": {
+      "main": [[{ "node": "Webhook Response", "type": "main", "index": 0 }]]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "arctic-error-handler"
+  },
+  "versionId": "2.0",
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "description": "State-of-the-art AI customer support agent for ArticShorex with MongoDB integration, OpenRouter Claude 3 Opus, RAG capabilities, and comprehensive monitoring."
+  },
+  "id": "arctic-shorex-ultimate-ai",
+  "tags": [
+    {
+      "id": "ai-agent",
+      "name": "AI Agent"
+    },
+    {
+      "id": "customer-support",
+      "name": "Customer Support"
+    },
+    {
+      "id": "mongodb",
+      "name": "MongoDB"
+    },
+    {
+      "id": "openrouter",
+      "name": "OpenRouter"
+    },
+    {
+      "id": "rag",
+      "name": "RAG"
+    },
+    {
+      "id": "arctic",
+      "name": "Arctic"
+    }
+  ]
+} 

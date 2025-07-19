@@ -1,0 +1,182 @@
+{
+  "name": "Slack Approval Test - Diagnostic",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [100, 200],
+      "id": "manual-trigger-test"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "todayDate",
+              "name": "todayDate",
+              "value": "2024-01-20",
+              "type": "string"
+            },
+            {
+              "id": "approvalId",
+              "name": "approvalId",
+              "value": "2024-01-20-TEST",
+              "type": "string"
+            },
+            {
+              "id": "sessionId",
+              "name": "sessionId",
+              "value": "TEST-SESSION-123",
+              "type": "string"
+            },
+            {
+              "id": "testContent",
+              "name": "testContent",
+              "value": "{\"title\": \"Test Blog Post\", \"seoScore\": \"85\", \"factualAccuracy\": \"90\"}",
+              "type": "string"
+            },
+            {
+              "id": "testStrategy",
+              "name": "testStrategy",
+              "value": "{\"strategicRationale\": \"Testing the approval system\", \"recommendedTopic\": \"AI Automation\"}",
+              "type": "string"
+            },
+            {
+              "id": "testResearch",
+              "name": "testResearch",
+              "value": "{\"researchAccuracy\": \"88\", \"uniqueInsights\": [\"insight1\", \"insight2\"], \"sources\": [\"source1\", \"source2\", \"source3\"]}",
+              "type": "string"
+            },
+            {
+              "id": "testLinkedIn",
+              "name": "testLinkedIn",
+              "value": "{\"linkedinPost\": \"Test LinkedIn post content\", \"algorithmScore\": \"92\"}",
+              "type": "string"
+            },
+            {
+              "id": "testQuality",
+              "name": "testQuality",
+              "value": "{\"qualityScore\": \"89\", \"researchAccuracy\": \"87\", \"approvalRecommendation\": \"APPROVE\"}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "name": "Test Data Setup",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [300, 200],
+      "id": "test-data-setup"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C093NE376A0",
+          "mode": "list",
+          "cachedResultName": "new-channel"
+        },
+        "text": "🧪 **SLACK TEST MESSAGE** - {{ $('Test Data Setup').item.json.todayDate }}\n\n**This is a simple test to verify Slack connectivity**\n\n**Session ID:** {{ $('Test Data Setup').item.json.sessionId }}",
+        "otherOptions": {}
+      },
+      "name": "Simple Slack Test",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.1,
+      "position": [500, 200],
+      "id": "simple-slack-test",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "gxDWyHK4Pm0DriHc",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C093NE376A0",
+          "mode": "list",
+          "cachedResultName": "new-channel"
+        },
+        "text": "🤖 **APPROVAL TEST WITH MOCK DATA** - {{ $('Test Data Setup').item.json.todayDate }}\n\n**🎯 Strategy Analysis:**\n{{ JSON.parse($('Test Data Setup').item.json.testStrategy).strategicRationale }}\n\n**🔬 Research Summary:**\nAccuracy: {{ JSON.parse($('Test Data Setup').item.json.testResearch).researchAccuracy }}/100\nUnique Insights: {{ JSON.parse($('Test Data Setup').item.json.testResearch).uniqueInsights.length }} discovered\nSources: {{ JSON.parse($('Test Data Setup').item.json.testResearch).sources.length }} verified\n\n**📖 Content Preview:**\nTitle: {{ JSON.parse($('Test Data Setup').item.json.testContent).title }}\nSEO Score: {{ JSON.parse($('Test Data Setup').item.json.testContent).seoScore }}/100\nFactual Accuracy: {{ JSON.parse($('Test Data Setup').item.json.testContent).factualAccuracy }}/100\n\n**💼 LinkedIn Preview:**\n{{ JSON.parse($('Test Data Setup').item.json.testLinkedIn).linkedinPost }}\nAlgorithm Score: {{ JSON.parse($('Test Data Setup').item.json.testLinkedIn).algorithmScore }}/100\n\n**✅ Quality Assessment:**\nOverall Score: {{ JSON.parse($('Test Data Setup').item.json.testQuality).qualityScore }}/100\nResearch Verification: {{ JSON.parse($('Test Data Setup').item.json.testQuality).researchAccuracy }}/100\nRecommendation: {{ JSON.parse($('Test Data Setup').item.json.testQuality).approvalRecommendation }}\n\n**💬 Actions:**\n✅ Reply with `APPROVE-{{ $('Test Data Setup').item.json.approvalId }}` - Publish now\n❌ Reply with `REJECT-{{ $('Test Data Setup').item.json.approvalId }}` - Try again tomorrow\n\n**Session ID:** {{ $('Test Data Setup').item.json.sessionId }}",
+        "otherOptions": {}
+      },
+      "name": "Full Approval Test",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.1,
+      "position": [500, 400],
+      "id": "full-approval-test",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "gxDWyHK4Pm0DriHc",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resume": "webhook",
+        "options": {
+          "webhookSuffix": "test-approval"
+        }
+      },
+      "name": "Test Wait for Approval",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [700, 400],
+      "id": "test-wait-approval",
+      "webhookId": "test-webhook-12345"
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Test Data Setup",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Test Data Setup": {
+      "main": [
+        [
+          {
+            "node": "Simple Slack Test",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Full Approval Test",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Full Approval Test": {
+      "main": [
+        [
+          {
+            "node": "Test Wait for Approval",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+} 

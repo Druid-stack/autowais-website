@@ -1,0 +1,223 @@
+{
+  "name": "Arctic Shorex Customer Support Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "mailbox": "INBOX",
+        "format": "simple",
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "id": "1a2b3c4d-5e6f-7890-abcd-ef1234567890",
+      "name": "Email Trigger",
+      "type": "n8n-nodes-base.emailReadImap",
+      "typeVersion": 2,
+      "position": [
+        240,
+        300
+      ],
+      "credentials": {
+        "imap": {
+          "id": "email-credentials",
+          "name": "Support Email IMAP"
+        }
+      },
+      "notes": "Configure with support@articshorex.com IMAP settings"
+    },
+    {
+      "parameters": {
+        "operation": "findOne",
+        "collection": "clients",
+        "query": "={\"email\": \"{{ $json.from.value[0].address }}\"}"
+      },
+      "id": "2b3c4d5e-6f78-9012-bcde-f23456789012",
+      "name": "Find Client",
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1,
+      "position": [
+        460,
+        300
+      ],
+      "credentials": {
+        "mongoDb": {
+          "id": "mongodb-credentials",
+          "name": "Nordic Horex MongoDB"
+        }
+      },
+      "notes": "Lookup client by email address"
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "collection": "support_tickets",
+        "fieldsUi": {
+          "field": [
+            {
+              "name": "clientEmail",
+              "value": "={{ $('Email Trigger').item.json.from.value[0].address }}"
+            },
+            {
+              "name": "clientName",
+              "value": "={{ $('Find Client').item.json ? $('Find Client').item.json.name : 'Unknown Client' }}"
+            },
+            {
+              "name": "subject",
+              "value": "={{ $('Email Trigger').item.json.subject }}"
+            },
+            {
+              "name": "message",
+              "value": "={{ $('Email Trigger').item.json.text }}"
+            },
+            {
+              "name": "timestamp",
+              "value": "={{ $now }}"
+            },
+            {
+              "name": "status",
+              "value": "open"
+            },
+            {
+              "name": "priority",
+              "value": "normal"
+            },
+            {
+              "name": "assignedTo",
+              "value": null
+            }
+          ]
+        }
+      },
+      "id": "3c4d5e6f-7890-1234-cdef-456789012345",
+      "name": "Create Support Ticket",
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1,
+      "position": [
+        680,
+        300
+      ],
+      "credentials": {
+        "mongoDb": {
+          "id": "mongodb-credentials",
+          "name": "Nordic Horex MongoDB"
+        }
+      },
+      "notes": "Create new support ticket in MongoDB"
+    },
+    {
+      "parameters": {
+        "fromEmail": "support@nordichorex.com",
+        "toEmail": "={{ $('Email Trigger').item.json.from.value[0].address }}",
+        "subject": "Re: {{ $('Email Trigger').item.json.subject }}",
+        "text": "Dear {{ $('Find Client').item.json ? $('Find Client').item.json.name : 'Valued Customer' }},\n\nThank you for contacting Arctic Shorex Travel Agency. We have received your support request and it has been assigned ticket number: {{ $('Create Support Ticket').item.json.insertedId }}.\n\nOur support team will review your request and respond within 24 hours. For urgent matters, please call us at +1-555-ARCTIC.\n\nYour inquiry:\n{{ $('Email Trigger').item.json.subject }}\n\nBest regards,\nArctic Shorex Support Team\nsupport@articshorex.com\nwww.articshorex.com",
+        "options": {
+          "replyTo": "support@nordichorex.com"
+        }
+      },
+      "id": "4d5e6f78-9012-3456-def0-56789012345a",
+      "name": "Send Auto-Reply",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [
+        900,
+        300
+      ],
+      "credentials": {
+        "smtp": {
+          "id": "smtp-credentials",
+          "name": "Support Email SMTP"
+        }
+      },
+      "notes": "Send acknowledgment email to customer"
+    },
+    {
+      "parameters": {
+        "fromEmail": "support@nordichorex.com",
+        "toEmail": "team@nordichorex.com",
+        "subject": "New Support Ticket: {{ $('Email Trigger').item.json.subject }}",
+        "text": "A new support ticket has been created:\n\nTicket ID: {{ $('Create Support Ticket').item.json.insertedId }}\nFrom: {{ $('Email Trigger').item.json.from.value[0].address }}\nClient: {{ $('Find Client').item.json ? $('Find Client').item.json.name : 'Unknown Client' }}\nSubject: {{ $('Email Trigger').item.json.subject }}\nMessage: {{ $('Email Trigger').item.json.text }}\nTimestamp: {{ $now }}\n\nPlease review and assign to appropriate team member.\n\nAccess n8n: http://localhost:5678\nMongoDB Dashboard: [Your MongoDB URL]",
+        "options": {
+          "replyTo": "support@nordichorex.com"
+        }
+      },
+      "id": "5e6f7890-1234-5678-ef01-6789012345ab",
+      "name": "Notify Support Team",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [
+        900,
+        480
+      ],
+      "credentials": {
+        "smtp": {
+          "id": "smtp-credentials",
+          "name": "Support Email SMTP"
+        }
+      },
+      "notes": "Notify internal team about new ticket"
+    }
+  ],
+  "connections": {
+    "Email Trigger": {
+      "main": [
+        [
+          {
+            "node": "Find Client",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Client": {
+      "main": [
+        [
+          {
+            "node": "Create Support Ticket",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Support Ticket": {
+      "main": [
+        [
+          {
+            "node": "Send Auto-Reply",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Notify Support Team",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1",
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "id": "nordic-horex-support",
+  "tags": [
+    {
+      "id": "support",
+      "name": "Support"
+    },
+    {
+      "id": "email",
+      "name": "Email"
+    },
+    {
+      "id": "mongodb",
+      "name": "MongoDB"
+    }
+  ]
+} 

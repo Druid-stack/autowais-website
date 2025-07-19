@@ -1,0 +1,68 @@
+{
+  "name": "Arctic Shorex Sample Test Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "test-arctic",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [200, 300],
+      "id": "webhook-test",
+      "name": "Test Webhook"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Arctic Shorex Sample Response\nconst customerName = $input.item.json.body.name || 'Valued Traveler';\nconst inquiry = $input.item.json.body.message || 'General inquiry';\n\nconst response = {\n  status: 'success',\n  message: `Hello ${customerName}! Thank you for your interest in Arctic Shorex Travel Agency.`,\n  inquiry: inquiry,\n  nextSteps: 'Our Arctic travel specialists will contact you within 24 hours.',\n  contact: {\n    email: 'support@articshorex.com',\n    phone: '+1-555-ARCTIC',\n    website: 'www.articshorex.com'\n  },\n  timestamp: new Date().toISOString()\n};\n\nreturn { response };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [400, 300],
+      "id": "process-request",
+      "name": "Process Arctic Request"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json.response }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [600, 300],
+      "id": "send-response",
+      "name": "Send Response"
+    }
+  ],
+  "connections": {
+    "Test Webhook": {
+      "main": [
+        [
+          {
+            "node": "Process Arctic Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Arctic Request": {
+      "main": [
+        [
+          {
+            "node": "Send Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "id": "arctic-sample-test"
+} 

@@ -1,0 +1,428 @@
+{
+  "name": "ArticShorex AI Agent Controller System",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "arctic-ai-controller",
+        "responseMode": "responseNode",
+        "options": {
+          "rawBody": false
+        }
+      },
+      "id": "webhook-entry",
+      "name": "System Entry Point",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-1200, 300],
+      "webhookId": "arctic-ai-controller-v3"
+    },
+    {
+      "parameters": {
+        "mailbox": "INBOX",
+        "options": {
+          "customEmailConfig": "={{true}}",
+          "secure": true,
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "id": "email-monitor",
+      "name": "Email Monitor",
+      "type": "n8n-nodes-base.emailReadImap",
+      "typeVersion": 2,
+      "position": [-1200, 450],
+      "credentials": {
+        "imap": {
+          "id": "arctic-email",
+          "name": "Arctic Email"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "# ArticShorex Master AI Controller\n\nYou are the Master AI Controller for ArticShorex customer support system. You have complete autonomy to:\n\n## Primary Responsibilities\n1. **Analyze** all incoming requests (email, webhook, chat)\n2. **Decide** the best course of action\n3. **Orchestrate** all system components\n4. **Monitor** performance and quality\n5. **Learn** from interactions to improve\n\n## Your Tools & Capabilities\n\n### 1. Customer Intelligence System\n- Query MongoDB for customer profiles, booking history, preferences\n- Analyze customer sentiment and intent\n- Predict customer needs based on historical data\n- Segment customers for personalized responses\n\n### 2. Knowledge Management\n- Search internal knowledge bases (Notion)\n- Query vector databases (Pinecone) for semantic search\n- Access real-time inventory and pricing\n- Retrieve policies and procedures\n\n### 3. Communication Control\n- Draft and send personalized email responses\n- Create support tickets with proper categorization\n- Escalate to human agents when necessary\n- Manage multi-channel communications\n\n### 4. Decision Engine\n- Determine response priority (urgent/normal/low)\n- Choose appropriate response template\n- Decide if human intervention is needed\n- Select best communication channel\n\n### 5. Quality Assurance\n- Monitor response accuracy\n- Track customer satisfaction predictions\n- Analyze resolution effectiveness\n- Implement continuous improvements\n\n## Decision Framework\n\n### For Each Request:\n1. **Identify**: Customer, intent, urgency, sentiment\n2. **Retrieve**: Customer history, relevant knowledge\n3. **Analyze**: Best response strategy\n4. **Execute**: Appropriate actions\n5. **Monitor**: Results and feedback\n\n## Autonomous Actions\n\nYou can independently:\n- Resolve standard inquiries\n- Process booking modifications\n- Handle refund requests (within policy)\n- Provide travel recommendations\n- Create and update support tickets\n- Send proactive communications\n- Escalate complex issues\n\n## Arctic Specialization\n- Northern Lights tour expertise\n- Arctic wildlife encounters\n- Extreme weather protocols\n- Indigenous culture experiences\n- Photography expeditions\n- Ice hotel bookings\n- Dog sledding adventures\n- Midnight sun cruises\n\n## Performance Metrics You Track\n- Response time (target: <2 minutes)\n- First contact resolution (target: >85%)\n- Customer satisfaction (target: >95%)\n- Accuracy rate (target: >98%)\n\n## Current Context\n- Timestamp: {{ $now }}\n- Request Type: {{ $json.type || 'general' }}\n- Channel: {{ $json.channel || 'unknown' }}\n- Customer Data Available: {{ $json.customerDataLoaded || false }}\n\nYou have full authority to make decisions and take actions. Always prioritize customer satisfaction while maintaining operational efficiency."
+        }
+      },
+      "id": "master-ai-controller",
+      "name": "Master AI Controller",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [-600, 300],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-3-opus",
+        "options": {
+          "baseURL": "https://openrouter.ai/api/v1",
+          "maxTokensToSample": 8192,
+          "temperature": 0.7,
+          "topP": 0.95
+        }
+      },
+      "id": "openrouter-model",
+      "name": "OpenRouter Claude 3 Opus",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [-800, 100],
+      "credentials": {
+        "openAiApi": {
+          "id": "openrouter-api",
+          "name": "OpenRouter API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "analyzeRequest",
+        "description": "Analyze incoming request to determine intent, urgency, and required actions",
+        "docsUrl": "https://articshorex.com/api/docs",
+        "properties": {
+          "mode": "manual",
+          "fields": [
+            {
+              "name": "requestData",
+              "type": "json",
+              "required": true,
+              "description": "The incoming request data to analyze"
+            }
+          ]
+        }
+      },
+      "id": "analyze-request-tool",
+      "name": "Tool: Analyze Request",
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1,
+      "position": [-800, 200]
+    },
+    {
+      "parameters": {
+        "operation": "aggregate",
+        "collection": "customers",
+        "pipeline": "=[\n  {\n    \"$match\": {\n      \"email\": \"{{ $fromAI('customerEmail') }}\"\n    }\n  },\n  {\n    \"$lookup\": {\n      \"from\": \"bookings\",\n      \"localField\": \"_id\",\n      \"foreignField\": \"customerId\",\n      \"as\": \"bookings\",\n      \"pipeline\": [\n        {\n          \"$match\": {\n            \"status\": { \"$in\": [\"confirmed\", \"pending\"] }\n          }\n        },\n        {\n          \"$sort\": { \"departureDate\": -1 }\n        },\n        {\n          \"$limit\": 10\n        }\n      ]\n    }\n  },\n  {\n    \"$lookup\": {\n      \"from\": \"support_history\",\n      \"localField\": \"_id\",\n      \"foreignField\": \"customerId\",\n      \"as\": \"supportHistory\",\n      \"pipeline\": [\n        {\n          \"$sort\": { \"createdAt\": -1 }\n        },\n        {\n          \"$limit\": 5\n        }\n      ]\n    }\n  },\n  {\n    \"$lookup\": {\n      \"from\": \"preferences\",\n      \"localField\": \"_id\",\n      \"foreignField\": \"customerId\",\n      \"as\": \"preferences\"\n    }\n  },\n  {\n    \"$project\": {\n      \"name\": 1,\n      \"email\": 1,\n      \"phone\": 1,\n      \"loyaltyTier\": 1,\n      \"totalSpent\": 1,\n      \"joinDate\": 1,\n      \"preferences\": { \"$arrayElemAt\": [\"$preferences\", 0] },\n      \"bookingCount\": { \"$size\": \"$bookings\" },\n      \"activeBookings\": {\n        \"$filter\": {\n          \"input\": \"$bookings\",\n          \"as\": \"booking\",\n          \"cond\": {\n            \"$gte\": [\"$$booking.departureDate\", new Date()]\n          }\n        }\n      },\n      \"recentBookings\": \"$bookings\",\n      \"supportHistory\": 1,\n      \"lastInteraction\": { \"$arrayElemAt\": [\"$supportHistory.createdAt\", 0] },\n      \"customerValue\": {\n        \"$switch\": {\n          \"branches\": [\n            { \"case\": { \"$gte\": [\"$totalSpent\", 50000] }, \"then\": \"platinum\" },\n            { \"case\": { \"$gte\": [\"$totalSpent\", 25000] }, \"then\": \"gold\" },\n            { \"case\": { \"$gte\": [\"$totalSpent\", 10000] }, \"then\": \"silver\" }\n          ],\n          \"default\": \"bronze\"\n        }\n      }\n    }\n  }\n]",
+        "options": {
+          "allowDiskUse": true
+        }
+      },
+      "id": "mongodb-customer-intelligence",
+      "name": "Tool: Customer Intelligence",
+      "type": "n8n-nodes-base.mongoDbTool",
+      "typeVersion": 1,
+      "position": [-800, 300]
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "collection": "support_tickets",
+        "fields": "={\n  \"ticketId\": \"{{ $fromAI('ticketId', 'AS-' + Date.now()) }}\",\n  \"customerId\": \"{{ $fromAI('customerId') }}\",\n  \"customerEmail\": \"{{ $fromAI('customerEmail') }}\",\n  \"customerName\": \"{{ $fromAI('customerName') }}\",\n  \"subject\": \"{{ $fromAI('subject') }}\",\n  \"category\": \"{{ $fromAI('category') }}\",\n  \"subCategory\": \"{{ $fromAI('subCategory') }}\",\n  \"priority\": \"{{ $fromAI('priority') }}\",\n  \"status\": \"{{ $fromAI('status', 'open') }}\",\n  \"channel\": \"{{ $fromAI('channel') }}\",\n  \"originalMessage\": \"{{ $fromAI('originalMessage') }}\",\n  \"aiAnalysis\": {\n    \"intent\": \"{{ $fromAI('intent') }}\",\n    \"sentiment\": \"{{ $fromAI('sentiment') }}\",\n    \"urgency\": \"{{ $fromAI('urgency') }}\",\n    \"complexity\": \"{{ $fromAI('complexity') }}\",\n    \"requiredActions\": {{ $fromAI('requiredActions', '[]') }}\n  },\n  \"aiResponse\": \"{{ $fromAI('response') }}\",\n  \"aiConfidence\": {{ $fromAI('confidence', 0.95) }},\n  \"resolutionPath\": \"{{ $fromAI('resolutionPath') }}\",\n  \"automatedActions\": {{ $fromAI('automatedActions', '[]') }},\n  \"escalationRequired\": {{ $fromAI('escalationRequired', false) }},\n  \"tags\": {{ $fromAI('tags', '[]') }},\n  \"metadata\": {\n    \"aiModel\": \"claude-3-opus\",\n    \"workflowVersion\": \"3.0\",\n    \"responseTime\": \"{{ $fromAI('responseTime') }}\",\n    \"knowledgeSourcesUsed\": {{ $fromAI('knowledgeSources', '[]') }}\n  },\n  \"createdAt\": \"{{ $now }}\",\n  \"updatedAt\": \"{{ $now }}\",\n  \"createdBy\": \"AI Controller\"\n}"
+      },
+      "id": "mongodb-ticket-management",
+      "name": "Tool: Ticket Management",
+      "type": "n8n-nodes-base.mongoDbTool",
+      "typeVersion": 1,
+      "position": [-800, 400]
+    },
+    {
+      "parameters": {
+        "fromEmail": "support@articshorex.com",
+        "toEmail": "={{ $fromAI('customerEmail') }}",
+        "subject": "={{ $fromAI('emailSubject') }}",
+        "html": "={{ $fromAI('emailHtml') }}",
+        "options": {
+          "replyTo": "support@articshorex.com",
+          "ccEmail": "={{ $fromAI('ccEmails', '') }}",
+          "bccEmail": "={{ $fromAI('bccEmails', '') }}",
+          "attachments": "={{ $fromAI('attachments', []) }}"
+        }
+      },
+      "id": "email-communication-tool",
+      "name": "Tool: Email Communication",
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [-800, 500]
+    },
+    {
+      "parameters": {
+        "url": "https://api.pinecone.io/query",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"vector\": {{ $fromAI('queryVector', '[]') }},\n  \"topK\": 10,\n  \"includeMetadata\": true,\n  \"namespace\": \"arctic-knowledge\",\n  \"filter\": {\n    \"category\": {\n      \"$in\": {{ $fromAI('searchCategories', '[\"general\"]') }}\n    },\n    \"language\": \"{{ $fromAI('language', 'en') }}\"\n  }\n}",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "vector-knowledge-search",
+      "name": "Tool: Vector Knowledge Search",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 1,
+      "position": [-800, 600]
+    },
+    {
+      "parameters": {
+        "resource": "database",
+        "operation": "search",
+        "databaseId": "={{ $credentials.notionDatabaseId }}",
+        "returnAll": false,
+        "limit": 20,
+        "filterType": "manual",
+        "filters": {
+          "conditions": "={{ $fromAI('notionSearchFilters', []) }}"
+        },
+        "options": {
+          "sort": {
+            "sortValue": [
+              {
+                "key": "Relevance",
+                "direction": "descending"
+              }
+            ]
+          }
+        }
+      },
+      "id": "notion-knowledge-base",
+      "name": "Tool: Notion Knowledge Base",
+      "type": "n8n-nodes-base.notionTool",
+      "typeVersion": 2.2,
+      "position": [-800, 700]
+    },
+    {
+      "parameters": {
+        "team": "arctic-support",
+        "channel": "={{ $fromAI('slackChannel', '#support-escalations') }}",
+        "text": "={{ $fromAI('slackMessage') }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": true,
+          "blocks": "={{ $fromAI('slackBlocks', []) }}"
+        }
+      },
+      "id": "slack-escalation-tool",
+      "name": "Tool: Slack Escalation",
+      "type": "n8n-nodes-base.slackTool",
+      "typeVersion": 2.2,
+      "position": [-800, 800]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are the Quality Assurance AI agent. Analyze the interaction and provide:\n1. Quality score (0-100)\n2. Areas of improvement\n3. Customer satisfaction prediction\n4. Compliance check results\n5. Recommendations for future interactions"
+        }
+      },
+      "id": "qa-ai-agent",
+      "name": "QA AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [-200, 500],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are the Learning AI agent. Your role is to:\n1. Analyze successful and unsuccessful interactions\n2. Identify patterns and trends\n3. Update knowledge bases with new information\n4. Suggest workflow improvements\n5. Train other AI agents with new insights"
+        }
+      },
+      "id": "learning-ai-agent",
+      "name": "Learning AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [-200, 700],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "escalation-check",
+              "leftValue": "={{ $json.escalationRequired }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "escalation-decision",
+      "name": "Escalation Decision",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [0, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Performance Analytics Dashboard\nconst performance = {\n  timestamp: new Date().toISOString(),\n  metrics: {\n    totalRequests: $input.all.length,\n    avgResponseTime: $input.all.reduce((acc, item) => acc + (item.json.responseTime || 0), 0) / $input.all.length,\n    resolutionRate: $input.all.filter(item => item.json.status === 'resolved').length / $input.all.length * 100,\n    escalationRate: $input.all.filter(item => item.json.escalationRequired).length / $input.all.length * 100,\n    customerSatisfaction: $input.all.reduce((acc, item) => acc + (item.json.satisfactionScore || 0), 0) / $input.all.length,\n    aiConfidence: $input.all.reduce((acc, item) => acc + (item.json.aiConfidence || 0), 0) / $input.all.length\n  },\n  insights: {\n    topCategories: {},\n    commonIssues: [],\n    performanceTrends: [],\n    recommendations: []\n  }\n};\n\n// Generate insights\nconst categories = {};\n$input.all.forEach(item => {\n  const category = item.json.category || 'uncategorized';\n  categories[category] = (categories[category] || 0) + 1;\n});\n\nperformance.insights.topCategories = Object.entries(categories)\n  .sort((a, b) => b[1] - a[1])\n  .slice(0, 5)\n  .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});\n\n// Add recommendations based on performance\nif (performance.metrics.escalationRate > 20) {\n  performance.insights.recommendations.push('High escalation rate detected. Consider expanding AI training data.');\n}\n\nif (performance.metrics.avgResponseTime > 3000) {\n  performance.insights.recommendations.push('Response times are above target. Optimize knowledge retrieval.');\n}\n\nif (performance.metrics.customerSatisfaction < 4.5) {\n  performance.insights.recommendations.push('Customer satisfaction below target. Review response quality.');\n}\n\nreturn { performance };"
+      },
+      "id": "analytics-processor",
+      "name": "Analytics Processor",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [200, 500]
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "collection": "ai_performance_logs",
+        "fields": "={{ $json.performance }}"
+      },
+      "id": "mongodb-analytics-storage",
+      "name": "Store Analytics",
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1,
+      "position": [400, 500]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"success\": true,\n  \"ticketId\": \"{{ $json.ticketId }}\",\n  \"status\": \"{{ $json.status }}\",\n  \"message\": \"{{ $json.response }}\",\n  \"metadata\": {\n    \"responseTime\": \"{{ $json.responseTime }}\",\n    \"aiConfidence\": {{ $json.aiConfidence }},\n    \"handledBy\": \"AI Controller System v3.0\",\n    \"escalated\": {{ $json.escalationRequired || false }}\n  },\n  \"nextSteps\": {{ $json.nextSteps || '[]' }},\n  \"timestamp\": \"{{ $now }}\"\n}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "X-AI-Controller",
+                "value": "ArticShorex-v3"
+              },
+              {
+                "name": "X-Response-Time",
+                "value": "={{ $json.responseTime }}"
+              },
+              {
+                "name": "X-AI-Confidence",
+                "value": "={{ $json.aiConfidence }}"
+              }
+            ]
+          }
+        }
+      },
+      "id": "api-response",
+      "name": "API Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [600, 300]
+    },
+    {
+      "parameters": {
+        "content": "## AI Controller System Architecture\n\n### Master AI Controller\n- Orchestrates entire workflow\n- Makes autonomous decisions\n- Controls all system components\n- Monitors performance\n\n### Specialized AI Agents\n1. **QA Agent**: Quality assurance\n2. **Learning Agent**: Continuous improvement\n\n### Tool Suite\n- Customer Intelligence (MongoDB)\n- Ticket Management\n- Email Communication\n- Knowledge Search (Vector + Notion)\n- Escalation (Slack)\n\n### Features\n- Multi-channel support\n- Real-time analytics\n- Autonomous operation\n- Self-improving system\n- Complete audit trail",
+        "height": 400,
+        "width": 350
+      },
+      "id": "architecture-note",
+      "name": "System Architecture",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [-1200, 100]
+    }
+  ],
+  "connections": {
+    "System Entry Point": {
+      "main": [[{ "node": "Master AI Controller", "type": "main", "index": 0 }]]
+    },
+    "Email Monitor": {
+      "main": [[{ "node": "Master AI Controller", "type": "main", "index": 0 }]]
+    },
+    "Master AI Controller": {
+      "main": [
+        [
+          { "node": "Escalation Decision", "type": "main", "index": 0 },
+          { "node": "QA AI Agent", "type": "main", "index": 0 },
+          { "node": "Learning AI Agent", "type": "main", "index": 0 }
+        ]
+      ],
+      "ai_tool": [
+        [
+          { "node": "Tool: Analyze Request", "type": "ai_tool", "index": 0 },
+          { "node": "Tool: Customer Intelligence", "type": "ai_tool", "index": 0 },
+          { "node": "Tool: Ticket Management", "type": "ai_tool", "index": 0 },
+          { "node": "Tool: Email Communication", "type": "ai_tool", "index": 0 },
+          { "node": "Tool: Vector Knowledge Search", "type": "ai_tool", "index": 0 },
+          { "node": "Tool: Notion Knowledge Base", "type": "ai_tool", "index": 0 },
+          { "node": "Tool: Slack Escalation", "type": "ai_tool", "index": 0 }
+        ]
+      ]
+    },
+    "OpenRouter Claude 3 Opus": {
+      "ai_languageModel": [
+        [
+          { "node": "Master AI Controller", "type": "ai_languageModel", "index": 0 },
+          { "node": "QA AI Agent", "type": "ai_languageModel", "index": 0 },
+          { "node": "Learning AI Agent", "type": "ai_languageModel", "index": 0 }
+        ]
+      ]
+    },
+    "Escalation Decision": {
+      "main": [
+        [{ "node": "API Response", "type": "main", "index": 0 }],
+        [{ "node": "API Response", "type": "main", "index": 0 }]
+      ]
+    },
+    "QA AI Agent": {
+      "main": [[{ "node": "Analytics Processor", "type": "main", "index": 0 }]]
+    },
+    "Learning AI Agent": {
+      "main": [[{ "node": "Analytics Processor", "type": "main", "index": 0 }]]
+    },
+    "Analytics Processor": {
+      "main": [[{ "node": "Store Analytics", "type": "main", "index": 0 }]]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "arctic-error-handler-v3"
+  },
+  "versionId": "3.0",
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "description": "Advanced AI Agent Controller System for ArticShorex. Features autonomous AI agents that control all aspects of customer support, including decision making, orchestration, quality assurance, and continuous learning."
+  },
+  "id": "arctic-ai-controller-v3",
+  "tags": [
+    {
+      "id": "ai-controller",
+      "name": "AI Controller"
+    },
+    {
+      "id": "autonomous",
+      "name": "Autonomous"
+    },
+    {
+      "id": "customer-support",
+      "name": "Customer Support"
+    },
+    {
+      "id": "mongodb",
+      "name": "MongoDB"
+    },
+    {
+      "id": "openrouter",
+      "name": "OpenRouter"
+    },
+    {
+      "id": "multi-agent",
+      "name": "Multi-Agent"
+    }
+  ]
+} 

@@ -1,0 +1,52 @@
+{
+  "description": "Corrected connections for your approval system",
+  "connections": {
+    "Request Human Approval1": {
+      "main": [
+        [
+          {
+            "node": "Wait for Approval1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for Approval1": {
+      "main": [
+        [
+          {
+            "node": "Check Approval",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Approval": {
+      "main": [
+        [
+          {
+            "node": "Publish to LinkedIn",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Rejection Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "notes": {
+    "critical_fix": "The 'Wait for Approval1' node MUST be connected to 'Check Approval' node",
+    "current_problem": "Wait for Approval1 has empty connections: 'main': [[]]",
+    "required_connection": "Wait for Approval1 → Check Approval",
+    "webhook_url": "https://your-n8n-instance.com/webhook/blog-approval",
+    "approval_format": "Reply with 'APPROVE-[id]' or 'REJECT-[id]' in Slack"
+  }
+} 
