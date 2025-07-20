@@ -1,0 +1,137 @@
+{
+  "folders": [
+    {
+      "name": "🏗️ Autowais Platform",
+      "path": "./01-Autowais-Platform"
+    },
+    {
+      "name": "🔗 LinkedIn Integration", 
+      "path": "./02-LinkedIn-Integration"
+    },
+    {
+      "name": "🤖 N8N Workflows & Agents",
+      "path": "./03-N8N-Workflows-Agents"
+    },
+    {
+      "name": "📚 Content & Knowledge",
+      "path": "./04-Content-Knowledge-Management"
+    },
+    {
+      "name": "🚀 Infrastructure & Deployment",
+      "path": "./05-Infrastructure-Deployment"
+    },
+    {
+      "name": "📦 Archive",
+      "path": "./06-Archive-Legacy"
+    }
+  ],
+  "settings": {
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true
+    },
+    "typescript.preferences.importModuleSpecifier": "relative",
+    "javascript.preferences.importModuleSpecifier": "relative",
+    "files.exclude": {
+      "**/node_modules": true,
+      "**/.git": false,
+      "**/.DS_Store": true,
+      "**/dist": true,
+      "**/build": true,
+      "**/*.log": true
+    },
+    "search.exclude": {
+      "**/node_modules": true,
+      "**/dist": true,
+      "**/build": true,
+      "**/*.log": true
+    },
+    "explorer.fileNesting.enabled": true,
+    "explorer.fileNesting.patterns": {
+      "package.json": "package-lock.json,yarn.lock,pnpm-lock.yaml",
+      "*.js": "$(capture).js.map,$(capture).min.js,$(capture).d.ts",
+      "*.ts": "$(capture).js,$(capture).js.map,$(capture).d.ts",
+      "tsconfig.json": "tsconfig.*.json",
+      "docker-compose.yml": "docker-compose.*.yml,Dockerfile*",
+      ".env": ".env.*",
+      "README.md": "*.md"
+    }
+  },
+  "extensions": {
+    "recommendations": [
+      "ms-vscode.vscode-typescript-next",
+      "bradlc.vscode-tailwindcss",
+      "esbenp.prettier-vscode",
+      "ms-vscode.vscode-eslint",
+      "ms-vscode.vscode-json",
+      "redhat.vscode-yaml",
+      "ms-azuretools.vscode-docker",
+      "GitLab.gitlab-workflow"
+    ]
+  },
+  "launch": {
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Debug Autowais Frontend",
+        "type": "node",
+        "request": "launch",
+        "cwd": "${workspaceFolder:🏗️ Autowais Platform}/frontend/autowais",
+        "runtimeExecutable": "npm",
+        "runtimeArgs": ["run", "dev"]
+      },
+      {
+        "name": "Debug Autowais Backend",
+        "type": "node",
+        "request": "launch",
+        "cwd": "${workspaceFolder:🏗️ Autowais Platform}/backend/autowais-backend",
+        "program": "server.js"
+      },
+      {
+        "name": "Debug LinkedIn Integration",
+        "type": "node",
+        "request": "launch",
+        "cwd": "${workspaceFolder:🔗 LinkedIn Integration}",
+        "program": "api-scripts/linkedin-api-final-fix.js",
+        "args": ["test"]
+      }
+    ]
+  },
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Install All Dependencies",
+        "type": "shell",
+        "command": "npm install",
+        "group": "build",
+        "presentation": {
+          "echo": true,
+          "reveal": "always",
+          "focus": false,
+          "panel": "shared"
+        },
+        "options": {
+          "cwd": "${workspaceFolder}"
+        },
+        "problemMatcher": []
+      },
+      {
+        "label": "Start All Services",
+        "type": "shell",
+        "command": "docker-compose up -d",
+        "group": "build",
+        "presentation": {
+          "echo": true,
+          "reveal": "always",
+          "focus": false,
+          "panel": "shared"
+        },
+        "options": {
+          "cwd": "${workspaceFolder:🚀 Infrastructure & Deployment}/docker"
+        },
+        "problemMatcher": []
+      }
+    ]
+  }
+} 
