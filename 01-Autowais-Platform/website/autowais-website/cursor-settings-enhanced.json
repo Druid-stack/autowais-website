@@ -1,0 +1,88 @@
+{
+  "workbench.settings.editor": "json",
+  
+  "mcp.servers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["@modelcontextprotocol/server-filesystem", "/Users/prashdcruz/Documents/n8n%20Powerhouse/Power%20Plant"],
+      "env": {},
+      "timeout": 60000,
+      "maxConcurrentRequests": 20,
+      "retryAttempts": 5,
+      "retryDelay": 2000
+    },
+    "github": {
+      "command": "npx",
+      "args": ["@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "your-token-here"
+      },
+      "timeout": 90000,
+      "maxConcurrentRequests": 25,
+      "retryAttempts": 3
+    },
+    "web-search": {
+      "command": "npx", 
+      "args": ["@modelcontextprotocol/server-brave-search"],
+      "env": {
+        "BRAVE_SEARCH_API_KEY": "your-api-key"
+      },
+      "timeout": 30000,
+      "maxConcurrentRequests": 15
+    }
+  },
+  
+  "mcp.settings": {
+    "maxToolCalls": 100,
+    "maxConcurrentServers": 20,
+    "requestTimeout": 90000,
+    "retryAttempts": 5,
+    "retryDelay": 2000,
+    "enableParallelRequests": true,
+    "maxParallelRequests": 10
+  },
+  
+  "cursor.general.enableMcp": true,
+  "cursor.cpp.maxFileSize": 10000000,
+  "cursor.general.enableCodeActions": true,
+  
+  "editor.tokenColorCustomizations": {
+    "textMateRules": [
+      {
+        "scope": "mcp.tool.call",
+        "settings": {
+          "foreground": "#00ff00"
+        }
+      }
+    ]
+  },
+  
+  "files.associations": {
+    "*.mcp": "json"
+  },
+  
+  "search.maxResults": 20000,
+  "search.smartCase": true,
+  "search.useIgnoreFiles": false,
+  
+  "terminal.integrated.commandsToSkipShell": [
+    "workbench.action.toggleSidebarVisibility"
+  ],
+  
+  "workbench.startupEditor": "newUntitledFile",
+  "workbench.editor.enablePreview": false,
+  "workbench.editor.limit.enabled": true,
+  "workbench.editor.limit.value": 20,
+  
+  "extensions.autoUpdate": true,
+  "extensions.autoCheckUpdates": true,
+  
+  "git.autofetch": true,
+  "git.confirmSync": false,
+  "git.enableSmartCommit": true,
+  
+  "emmet.includeLanguages": {
+    "javascript": "javascriptreact",
+    "typescript": "typescriptreact"
+  }
+} 
