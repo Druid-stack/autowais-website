@@ -15,7 +15,9 @@ class LinkedInIntegration {
     const scopes = [
       'r_liteprofile',
       'w_member_social',
-      'rw_organization_admin'
+      'openid',
+      'profile',
+      'email'
     ].join(',');
     return `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${this.clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scopes)}&state=autowais_${Date.now()}`;
   }

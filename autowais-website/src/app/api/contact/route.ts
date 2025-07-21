@@ -97,7 +97,7 @@ export async function POST(req: NextRequest) {
             <div style="margin-top: 20px;">
               <a href="mailto:karl.hallis@autowais.com" style="color: #10b981; text-decoration: none; margin: 0 10px;">📧 karl.hallis@autowais.com</a>
               <span style="color: #6b7280;">|</span>
-              <a href="https://autowais.com" style="color: #10b981; text-decoration: none; margin: 0 10px;">🌐 www.autowais.com</a>
+              <a href="/" style="color: #10b981; text-decoration: none; margin: 0 10px;">🌐 autowais.com</a>
             </div>
           </div>
         </div>

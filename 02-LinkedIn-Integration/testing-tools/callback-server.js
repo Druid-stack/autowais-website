@@ -10,13 +10,14 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  if (parsedUrl.pathname === '/callback') {
+  if (parsedUrl.pathname === '/callback' || parsedUrl.pathname === '/api/auth/callback') {
     const query = parsedUrl.query;
 
     if (query.error) {
-      console.error('❌ OAuth Error:', query.error_description);
-      res.writeHead(400);
-      res.end('OAuth Error: ' + query.error_description);
+      console.error('❌ OAuth Error:', query.error);
+      console.error('❌ Error Description:', query.error_description);
+      res.writeHead(400, { 'Content-Type': 'text/plain' });
+      res.end(`OAuth Error: ${query.error}\nDescription: ${query.error_description}`);
       return;
     }
 
@@ -24,6 +25,7 @@ const server = http.createServer((req, res) => {
     const state = query.state;
 
     if (!code) {
+      console.error('❌ No authorization code found in URL');
       res.writeHead(400, { 'Content-Type': 'text/plain' });
       res.end('Authorization code not found in URL');
       return;
@@ -31,9 +33,10 @@ const server = http.createServer((req, res) => {
 
     console.log('✅ Authorization code received:', code);
     console.log('State:', state);
+    console.log('🔗 Ready to exchange for access token');
 
     res.writeHead(200, { 'Content-Type': 'text/plain' });
-    res.end(`Authorization Code Received\n\nCode: ${code}\nState: ${state}`);
+    res.end(`Authorization Code Received Successfully!\n\nCode: ${code}\nState: ${state}\n\nYou can now use this code to get an access token.`);
   }
 });
 

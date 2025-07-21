@@ -1,3 +1,0 @@
-The following person is interested in our services. Ask 1-2 questions to qualify them (e.g., what they need, their budget, or timeline). Be concise and friendly.
-
-Lead message: {{ $json["message"] }} 

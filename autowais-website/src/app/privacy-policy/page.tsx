@@ -239,7 +239,7 @@ export default function PrivacyPolicy() {
                       Email: <a href="mailto:privacy@autowais.com" className="text-blue-600 hover:text-blue-800">privacy@autowais.com</a>
                     </p>
                     <p className="text-gray-700 mb-1">
-                      Website: <a href="https://autowais.com" className="text-blue-600 hover:text-blue-800">https://autowais.com</a>
+                      Website: <a href="/" className="text-blue-600 hover:text-blue-800">autowais.com</a>
                     </p>
                     
                     <h4 className="text-lg font-medium text-gray-800 mt-4 mb-2">Data Protection Officer</h4>
@@ -255,7 +255,7 @@ export default function PrivacyPolicy() {
                 <h3 className="text-xl font-semibold text-gray-800 mb-2">AUTOWAIS</h3>
                 <p className="text-gray-600 italic mb-2">Empowering businesses with AI automation</p>
                 <p className="text-gray-600">
-                  <a href="https://autowais.com" className="text-blue-600 hover:text-blue-800">https://autowais.com</a>
+                  <a href="/" className="text-blue-600 hover:text-blue-800">autowais.com</a>
                 </p>
               </div>
             </div>
