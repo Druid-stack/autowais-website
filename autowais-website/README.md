@@ -399,3 +399,7 @@ npm start
 **Backend**: Node.js/Express  
 **Database**: MongoDB  
 **Last Updated**: $(date)
+
+# Deployment Trigger
+
+This line was added to trigger a new deployment on Vercel.
