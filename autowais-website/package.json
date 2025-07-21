@@ -22,7 +22,8 @@
     "test:coverage": "jest --coverage",
     "test:e2e": "playwright test",
     "test:api": "jest --testPathPattern=api",
-    "test:integration": "jest --testPathPattern=integration"
+    "test:integration": "jest --testPathPattern=integration",
+    "postbuild": "next-sitemap"
   },
   "dependencies": {
     "@tailwindcss/aspect-ratio": "^0.4.2",
