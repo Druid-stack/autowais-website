@@ -1,0 +1,91 @@
+{
+  "name": "Test Blogs-Test Channel - Simple",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [100, 200],
+      "id": "manual-trigger-simple"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "todayDate",
+              "name": "todayDate",
+              "value": "{{ $now.format('YYYY-MM-DD') }}",
+              "type": "string"
+            },
+            {
+              "id": "testTime",
+              "name": "testTime",
+              "value": "{{ $now.format('HH:mm:ss') }}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "name": "Test Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [300, 200],
+      "id": "test-data-simple"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C095W5Y1V1R",
+          "mode": "list",
+          "cachedResultName": "blogs-test"
+        },
+        "text": "🧪 **SIMPLE SLACK TEST** - {{ $('Test Data').item.json.todayDate }} at {{ $('Test Data').item.json.testTime }}\n\n**✅ This message confirms:**\n• Slack credentials are working\n• Bot can post to #blogs-test channel\n• Basic n8n → Slack communication is active\n\n**🔧 If you see this message, your Slack setup is working correctly!**\n\n**Next step:** Test the approval system with mock data",
+        "otherOptions": {}
+      },
+      "name": "Test Blogs-Test Channel",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.1,
+      "position": [500, 200],
+      "id": "test-blogs-channel",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "gxDWyHK4Pm0DriHc",
+          "name": "Slack account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Test Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Test Data": {
+      "main": [
+        [
+          {
+            "node": "Test Blogs-Test Channel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+} 

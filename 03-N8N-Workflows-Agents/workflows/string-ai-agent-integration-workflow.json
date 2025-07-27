@@ -1,0 +1,210 @@
+{
+  "name": "String.com AI Agent Integration",
+  "nodes": [
+    {
+      "id": "webhook-trigger",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "string-agent",
+        "responseMode": "responseNode",
+        "options": {}
+      }
+    },
+    {
+      "id": "string-agent-request",
+      "name": "String.com Agent Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 300],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.string.com/v1/agents/execute",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "headerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer {{ $env.STRING_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "agent_id",
+              "value": "={{ $json.agent_id }}"
+            },
+            {
+              "name": "input",
+              "value": "={{ $json.input }}"
+            },
+            {
+              "name": "context",
+              "value": "={{ $json.context || {} }}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "process-agent-response",
+      "name": "Process Agent Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 300],
+      "parameters": {
+        "jsCode": "// Process String.com agent response\nconst response = $input.first().json;\n\n// Extract agent results\nconst agentResult = {\n  success: response.status === 'completed',\n  output: response.output,\n  actions: response.actions || [],\n  metadata: response.metadata || {}\n};\n\n// Log agent execution\nconsole.log('String.com Agent executed:', agentResult);\n\n// Return processed result\nreturn [{\n  json: {\n    ...$input.first().json,\n    processed_result: agentResult,\n    timestamp: new Date().toISOString()\n  }\n}];"
+      }
+    },
+    {
+      "id": "conditional-routing",
+      "name": "Route Based on Agent Result",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [900, 300],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "condition1",
+              "leftValue": "={{ $json.processed_result.success }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equal"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "success-handler",
+      "name": "Success Handler",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1120, 200],
+      "parameters": {
+        "jsCode": "// Handle successful agent execution\nconst result = $input.first().json;\n\n// You can add custom success logic here\n// For example: send notifications, update databases, etc.\n\nreturn [{\n  json: {\n    status: 'success',\n    message: 'String.com agent executed successfully',\n    agent_output: result.processed_result.output,\n    actions_taken: result.processed_result.actions.length,\n    execution_time: new Date().toISOString()\n  }\n}];"
+      }
+    },
+    {
+      "id": "error-handler",
+      "name": "Error Handler",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1120, 400],
+      "parameters": {
+        "jsCode": "// Handle agent execution errors\nconst result = $input.first().json;\n\n// Log error details\nconsole.error('String.com agent error:', result);\n\n// You can add error handling logic here\n// For example: retry logic, alert notifications, etc.\n\nreturn [{\n  json: {\n    status: 'error',\n    message: 'String.com agent execution failed',\n    error_details: result.processed_result,\n    timestamp: new Date().toISOString()\n  }\n}];"
+      }
+    },
+    {
+      "id": "webhook-response",
+      "name": "Webhook Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1340, 300],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}"
+      }
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "String.com Agent Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "String.com Agent Request": {
+      "main": [
+        [
+          {
+            "node": "Process Agent Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Agent Response": {
+      "main": [
+        [
+          {
+            "node": "Route Based on Agent Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Based on Agent Result": {
+      "main": [
+        [
+          {
+            "node": "Success Handler",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error Handler",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Success Handler": {
+      "main": [
+        [
+          {
+            "node": "Webhook Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Handler": {
+      "main": [
+        [
+          {
+            "node": "Webhook Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1"
+} 

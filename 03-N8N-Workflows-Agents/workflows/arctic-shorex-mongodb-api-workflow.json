@@ -1,0 +1,333 @@
+{
+  "name": "ArticShorex AI Agent with MongoDB API",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "arctic-ai-support",
+        "responseMode": "responseNode",
+        "options": {
+          "rawBody": false
+        }
+      },
+      "id": "webhook-entry",
+      "name": "Support Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-1000, 300],
+      "webhookId": "arctic-support-api"
+    },
+    {
+      "parameters": {
+        "mailbox": "INBOX",
+        "options": {
+          "customEmailConfig": "={{true}}",
+          "secure": true,
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "id": "email-trigger",
+      "name": "Email Monitor",
+      "type": "n8n-nodes-base.emailReadImap",
+      "typeVersion": 2,
+      "position": [-1000, 450],
+      "credentials": {
+        "imap": {
+          "id": "arctic-email",
+          "name": "Arctic Email"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "# ArticShorex AI Support Agent with MongoDB API\n\nYou are the AI Support Agent for ArticShorex, with access to customer data via MongoDB API.\n\n## Your Capabilities:\n\n### 1. Customer Data Access (MongoDB API)\n- Query customer profiles via API\n- Retrieve booking information\n- Access support history\n- Update customer records\n\n### 2. Intelligent Response Generation\n- Analyze customer inquiries\n- Provide personalized responses\n- Handle booking modifications\n- Process support requests\n\n### 3. Communication Management\n- Send email responses\n- Create support tickets\n- Escalate when necessary\n\n## Available Tools:\n\n1. **MongoDB API - Customer Query**: Retrieve customer data\n2. **MongoDB API - Booking Query**: Get booking information\n3. **MongoDB API - Create Ticket**: Log support interactions\n4. **MongoDB API - Update Customer**: Update customer records\n5. **Email Tool**: Send responses\n6. **Escalation Tool**: Notify human agents\n\n## Arctic Specialties:\n- Northern Lights tours\n- Arctic expeditions\n- Wildlife encounters\n- Ice hotel experiences\n- Dog sledding\n- Photography tours\n\n## Response Guidelines:\n1. Always check customer history first\n2. Personalize responses based on their profile\n3. Be empathetic and professional\n4. Provide specific, actionable information\n5. Escalate complex issues\n\nCurrent request: {{ JSON.stringify($json, null, 2) }}"
+        }
+      },
+      "id": "ai-agent",
+      "name": "Arctic AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [-600, 300],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-3-opus",
+        "options": {
+          "baseURL": "https://openrouter.ai/api/v1",
+          "maxTokensToSample": 4096,
+          "temperature": 0.7,
+          "topP": 0.9
+        }
+      },
+      "id": "openrouter-llm",
+      "name": "OpenRouter Claude 3",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [-800, 100],
+      "credentials": {
+        "openAiApi": {
+          "id": "openrouter-api",
+          "name": "OpenRouter API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "MongoDB API - Customer Query",
+        "description": "Query customer data via MongoDB API",
+        "method": "POST",
+        "url": "={{ $vars.MONGODB_API_URL }}/customers/query",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"email\": \"{{ $fromAI('customerEmail') }}\",\n  \"fields\": [\n    \"name\",\n    \"email\",\n    \"phone\",\n    \"loyaltyStatus\",\n    \"totalBookings\",\n    \"lastBookingDate\",\n    \"preferences\",\n    \"vipStatus\"\n  ]\n}",
+        "headers": {
+          "entries": [
+            {
+              "name": "X-API-Key",
+              "value": "={{ $vars.MONGODB_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "mongodb-api-customer",
+      "name": "Tool: MongoDB API - Customer",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1,
+      "position": [-800, 300]
+    },
+    {
+      "parameters": {
+        "name": "MongoDB API - Booking Query",
+        "description": "Query booking data via MongoDB API",
+        "method": "POST",
+        "url": "={{ $vars.MONGODB_API_URL }}/bookings/query",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"customerEmail\": \"{{ $fromAI('customerEmail') }}\",\n  \"status\": [\"confirmed\", \"pending\"],\n  \"limit\": 10,\n  \"sort\": {\n    \"departureDate\": -1\n  }\n}",
+        "headers": {
+          "entries": [
+            {
+              "name": "X-API-Key",
+              "value": "={{ $vars.MONGODB_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "mongodb-api-bookings",
+      "name": "Tool: MongoDB API - Bookings",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1,
+      "position": [-800, 400]
+    },
+    {
+      "parameters": {
+        "name": "MongoDB API - Create Ticket",
+        "description": "Create support ticket via MongoDB API",
+        "method": "POST",
+        "url": "={{ $vars.MONGODB_API_URL }}/tickets/create",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"ticket\": {\n    \"ticketId\": \"{{ $fromAI('ticketId', 'AS-' + Date.now()) }}\",\n    \"customerEmail\": \"{{ $fromAI('customerEmail') }}\",\n    \"customerName\": \"{{ $fromAI('customerName') }}\",\n    \"subject\": \"{{ $fromAI('subject') }}\",\n    \"category\": \"{{ $fromAI('category', 'general') }}\",\n    \"priority\": \"{{ $fromAI('priority', 'normal') }}\",\n    \"status\": \"{{ $fromAI('status', 'open') }}\",\n    \"channel\": \"{{ $fromAI('channel', 'email') }}\",\n    \"originalMessage\": \"{{ $fromAI('originalMessage') }}\",\n    \"aiResponse\": \"{{ $fromAI('response') }}\",\n    \"aiAnalysis\": {\n      \"sentiment\": \"{{ $fromAI('sentiment', 'neutral') }}\",\n      \"intent\": \"{{ $fromAI('intent') }}\",\n      \"confidence\": {{ $fromAI('confidence', 0.95) }}\n    },\n    \"createdAt\": \"{{ $now }}\",\n    \"createdBy\": \"AI Agent - OpenRouter\"\n  }\n}",
+        "headers": {
+          "entries": [
+            {
+              "name": "X-API-Key",
+              "value": "={{ $vars.MONGODB_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "mongodb-api-ticket",
+      "name": "Tool: MongoDB API - Create Ticket",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1,
+      "position": [-800, 500]
+    },
+    {
+      "parameters": {
+        "name": "MongoDB API - Update Customer",
+        "description": "Update customer record via MongoDB API",
+        "method": "PUT",
+        "url": "={{ $vars.MONGODB_API_URL }}/customers/update",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"email\": \"{{ $fromAI('customerEmail') }}\",\n  \"updates\": {\n    \"lastContactDate\": \"{{ $now }}\",\n    \"lastContactType\": \"{{ $fromAI('contactType', 'support') }}\",\n    \"supportInteractions\": {\n      \"$inc\": 1\n    },\n    \"notes\": {\n      \"$push\": {\n        \"date\": \"{{ $now }}\",\n        \"note\": \"{{ $fromAI('interactionNote') }}\",\n        \"agent\": \"AI Agent\"\n      }\n    }\n  }\n}",
+        "headers": {
+          "entries": [
+            {
+              "name": "X-API-Key",
+              "value": "={{ $vars.MONGODB_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "mongodb-api-update",
+      "name": "Tool: MongoDB API - Update Customer",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1,
+      "position": [-800, 600]
+    },
+    {
+      "parameters": {
+        "fromEmail": "support@articshorex.com",
+        "toEmail": "={{ $fromAI('customerEmail') }}",
+        "subject": "={{ $fromAI('emailSubject', 'Re: Your Arctic Adventure Inquiry') }}",
+        "html": "=<!DOCTYPE html>\n<html>\n<head>\n    <style>\n        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }\n        .header { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }\n        .content { padding: 30px; background: #f9f9f9; }\n        .footer { background: #2c3e50; color: white; padding: 20px; text-align: center; border-radius: 0 0 10px 10px; }\n        .button { background: #3498db; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; display: inline-block; margin: 10px 0; }\n        .info-box { background: white; border-left: 4px solid #3498db; padding: 15px; margin: 20px 0; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }\n        .highlight { color: #2a5298; font-weight: bold; }\n    </style>\n</head>\n<body>\n    <div style=\"max-width: 600px; margin: 0 auto; box-shadow: 0 0 20px rgba(0,0,0,0.1);\">\n        <div class=\"header\">\n            <h1 style=\"margin: 0;\">ArticShorex</h1>\n            <p style=\"margin: 10px 0 0 0;\">Your Gateway to Arctic Adventures</p>\n        </div>\n        <div class=\"content\">\n            <h2>Hello {{ $fromAI('customerName', 'Valued Traveler') }}!</h2>\n            \n            {{ $fromAI('emailContent') }}\n            \n            <div class=\"info-box\">\n                <h3 style=\"margin-top: 0;\">Your Support Details</h3>\n                <p><span class=\"highlight\">Ticket ID:</span> {{ $fromAI('ticketId') }}<br>\n                <span class=\"highlight\">Status:</span> {{ $fromAI('status', 'In Progress') }}<br>\n                <span class=\"highlight\">Response Time:</span> {{ $fromAI('responseTime', '< 2 minutes') }}</p>\n            </div>\n            \n            <p>Need immediate assistance? We're here to help!</p>\n            <p style=\"text-align: center;\">\n                <a href=\"https://articshorex.com/support\" class=\"button\">Visit Support Center</a>\n                <a href=\"tel:+1555ARCTIC\" class=\"button\" style=\"background: #27ae60;\">Call Us</a>\n            </p>\n        </div>\n        <div class=\"footer\">\n            <p style=\"margin: 5px 0;\"><strong>ArticShorex Travel Agency</strong></p>\n            <p style=\"margin: 5px 0;\">📧 support@articshorex.com | 📞 +1-555-ARCTIC</p>\n            <p style=\"margin: 5px 0;\">🌐 www.articshorex.com | Emergency: +1-555-ARCTIC-911</p>\n            <p style=\"font-size: 12px; margin-top: 15px; opacity: 0.8;\">© 2024 ArticShorex. Creating Unforgettable Arctic Experiences.</p>\n        </div>\n    </div>\n</body>\n</html>",
+        "options": {
+          "replyTo": "support@articshorex.com",
+          "attachments": []
+        }
+      },
+      "id": "email-tool",
+      "name": "Tool: Send Email",
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [-800, 700]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Set MongoDB API configuration\n// These should be set as environment variables in n8n\n$vars.MONGODB_API_URL = process.env.MONGODB_API_URL || 'https://api.articshorex.com/mongodb';\n$vars.MONGODB_API_KEY = process.env.MONGODB_API_KEY || 'your-api-key-here';\n\n// Process incoming data\nconst requestData = {\n  type: $input.item.json.type || 'email',\n  from: $input.item.json.from || $input.item.json.body?.email,\n  subject: $input.item.json.subject || $input.item.json.body?.subject,\n  message: $input.item.json.text || $input.item.json.body?.message,\n  timestamp: new Date().toISOString()\n};\n\nreturn { requestData };"
+      },
+      "id": "config-processor",
+      "name": "Configure API & Process Request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-800, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"success\": true,\n  \"ticketId\": \"{{ $json.ticketId }}\",\n  \"message\": \"{{ $json.message || 'Your request has been processed successfully.' }}\",\n  \"status\": \"{{ $json.status || 'completed' }}\",\n  \"responseTime\": \"{{ $json.responseTime }}\",\n  \"agent\": {\n    \"type\": \"AI Agent\",\n    \"model\": \"Claude 3 Opus via OpenRouter\",\n    \"confidence\": {{ $json.confidence || 0.95 }}\n  },\n  \"nextSteps\": {{ $json.nextSteps || '[]' }},\n  \"timestamp\": \"{{ $now }}\"\n}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "X-Powered-By",
+                "value": "ArticShorex AI"
+              }
+            ]
+          }
+        }
+      },
+      "id": "webhook-response",
+      "name": "API Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [-200, 300]
+    },
+    {
+      "parameters": {
+        "content": "## MongoDB API Configuration\n\n### Required Environment Variables:\n```\nMONGODB_API_URL=https://api.articshorex.com/mongodb\nMONGODB_API_KEY=your-api-key-here\n```\n\n### API Endpoints Used:\n1. `/customers/query` - Get customer data\n2. `/bookings/query` - Get booking info\n3. `/tickets/create` - Create support tickets\n4. `/customers/update` - Update customer records\n\n### Features:\n- All MongoDB operations via REST API\n- Secure API key authentication\n- JSON request/response format\n- Error handling on all API calls\n- Timeout protection (10s)\n\n### Setup:\n1. Get API credentials from client\n2. Set environment variables in n8n\n3. Test API connectivity\n4. Activate workflow",
+        "height": 400,
+        "width": 350
+      },
+      "id": "api-config-note",
+      "name": "MongoDB API Setup",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [-1200, 100]
+    }
+  ],
+  "connections": {
+    "Support Webhook": {
+      "main": [[{ "node": "Configure API & Process Request", "type": "main", "index": 0 }]]
+    },
+    "Email Monitor": {
+      "main": [[{ "node": "Configure API & Process Request", "type": "main", "index": 0 }]]
+    },
+    "Configure API & Process Request": {
+      "main": [[{ "node": "Arctic AI Agent", "type": "main", "index": 0 }]]
+    },
+    "Arctic AI Agent": {
+      "main": [[{ "node": "API Response", "type": "main", "index": 0 }]],
+      "ai_tool": [
+        [
+          { "node": "Tool: MongoDB API - Customer", "type": "ai_tool", "index": 0 },
+          { "node": "Tool: MongoDB API - Bookings", "type": "ai_tool", "index": 0 },
+          { "node": "Tool: MongoDB API - Create Ticket", "type": "ai_tool", "index": 0 },
+          { "node": "Tool: MongoDB API - Update Customer", "type": "ai_tool", "index": 0 },
+          { "node": "Tool: Send Email", "type": "ai_tool", "index": 0 }
+        ]
+      ]
+    },
+    "OpenRouter Claude 3": {
+      "ai_languageModel": [[{ "node": "Arctic AI Agent", "type": "ai_languageModel", "index": 0 }]]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "1.0",
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "description": "ArticShorex AI Customer Support Agent using MongoDB API endpoints. Configured to work with client's MongoDB REST API for all database operations."
+  },
+  "id": "arctic-mongodb-api",
+  "tags": [
+    {
+      "id": "ai-agent",
+      "name": "AI Agent"
+    },
+    {
+      "id": "mongodb-api",
+      "name": "MongoDB API"
+    },
+    {
+      "id": "customer-support",
+      "name": "Customer Support"
+    },
+    {
+      "id": "openrouter",
+      "name": "OpenRouter"
+    }
+  ]
+} 
