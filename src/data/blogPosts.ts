@@ -390,7 +390,7 @@ export const blogPosts: BlogPost[] = [
     readTime: "4 min read",
     category: "Change Management",
     tags: ["AI", "ChangeManagement", "DigitalTransformation", "Leadership", "Automation", "BusinessStrategy"],
-    image: "/images/blog/digital-transformation.png"
+    image: "/images/blog/ecommerce-stack.png"
   },
   {
     id: "breaking-down-data-silos",
@@ -450,7 +450,7 @@ export const blogPosts: BlogPost[] = [
     readTime: "4 min read",
     category: "AI Ethics",
     tags: ["AI", "Ethics", "Compliance", "Trust", "Regulation", "ResponsibleAI"],
-    image: "/images/blog/ai-automation.png"
+    image: "/images/blog/data-analytics.png"
   },
   {
     id: "customer-experience-automation",
@@ -462,7 +462,7 @@ export const blogPosts: BlogPost[] = [
     readTime: "4 min read",
     category: "Customer Experience",
     tags: ["CustomerExperience", "Automation", "AI", "CX", "Personalization", "CustomerService"],
-    image: "/images/blog/mobile-trends.png"
+    image: "/images/blog/remote-work-tools.png"
   },
   {
     id: "process-mining",
@@ -474,7 +474,7 @@ export const blogPosts: BlogPost[] = [
     readTime: "4 min read",
     category: "Process Mining",
     tags: ["ProcessMining", "Optimization", "Workflow", "BusinessProcess", "Efficiency", "DataAnalytics"],
-    image: "/images/blog/workflow-automation.png"
+    image: "/images/blog/mobile-trends.png"
   },
   {
     id: "cloud-integration-challenges",
