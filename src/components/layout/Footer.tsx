@@ -23,12 +23,7 @@ export default function Footer() {
           {/* Company Info */}
           <div className="lg:col-span-1">
             <div className="flex items-center">
-              <img
-                src="/images/autowais-logo-original.png"
-                alt="AUTOWAIS - Your Complete Technology Solutions Partner"
-                className="h-10 w-auto"
-
-              />
+              <span className="text-2xl font-bold text-emerald-400">AUTOWAIS</span>
             </div>
             <p className="mt-4 text-sm text-gray-300">
               Your Complete Technology Solutions Partner. We deliver custom development, process automation, and system integration solutions that drive real business growth.
@@ -115,30 +110,21 @@ export default function Footer() {
             <h3 className="text-sm font-semibold text-white mb-4">Security & Compliance</h3>
             <div className="flex flex-wrap justify-center items-center gap-6 lg:gap-8">
               <div className="flex flex-col items-center group">
-                <img
-                  src="/images/compliance/soc2-logo.png"
-                  alt="SOC 2 Type II Compliant"
-                  className="h-12 w-auto group-hover:scale-110 transition-transform duration-200"
-
-                />
+                <div className="h-12 w-16 bg-gray-700 rounded flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
+                  <span className="text-white text-xs font-semibold">SOC 2</span>
+                </div>
                 <span className="text-xs text-gray-400 mt-1">SOC 2 Type II</span>
               </div>
               <div className="flex flex-col items-center group">
-                <img
-                  src="/images/compliance/gdpr-logo.png"
-                  alt="GDPR Compliant"
-                  className="h-12 w-auto group-hover:scale-110 transition-transform duration-200"
-
-                />
+                <div className="h-12 w-16 bg-blue-600 rounded flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
+                  <span className="text-white text-xs font-semibold">GDPR</span>
+                </div>
                 <span className="text-xs text-gray-400 mt-1">GDPR Ready</span>
               </div>
               <div className="flex flex-col items-center group">
-                <img
-                  src="/images/compliance/hipaa-logo.png"
-                  alt="HIPAA Compliant"
-                  className="h-12 w-auto group-hover:scale-110 transition-transform duration-200"
-
-                />
+                <div className="h-12 w-16 bg-green-600 rounded flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
+                  <span className="text-white text-xs font-semibold">HIPAA</span>
+                </div>
                 <span className="text-xs text-gray-400 mt-1">HIPAA Eligible</span>
               </div>
             </div>
