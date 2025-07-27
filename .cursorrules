@@ -1,0 +1,121 @@
+# Autowais - Business Website Project
+
+## Project Overview
+
+Autowais is a business website built with Next.js, featuring modern web development practices, SEO optimization, and professional design.
+
+## Technology Stack
+
+- **Next.js**: React framework for production
+- **TypeScript**: Type-safe JavaScript
+- **Tailwind CSS**: Utility-first CSS framework
+- **React**: UI library
+- **Vercel**: Deployment platform
+- **MongoDB**: Database (configured)
+- **Nodemailer**: Email functionality
+
+## Development Guidelines
+
+### Next.js Best Practices
+
+- Use App Router for new pages
+- Implement proper SEO with metadata
+- Use server components where possible
+- Optimize images with Next.js Image component
+- Implement proper error boundaries
+
+### TypeScript Guidelines
+
+- Use strict TypeScript configuration
+- Prefer interfaces over type aliases for complex objects
+- Use proper typing for API responses
+- Avoid `any` type - use proper interfaces
+- Leverage TypeScript for better development experience
+
+### React Best Practices
+
+- Use functional components with hooks
+- Implement proper state management
+- Use React.memo for performance optimization
+- Follow React patterns and conventions
+- Keep components small and focused
+
+### Styling Guidelines
+
+- Use Tailwind CSS utility classes
+- Maintain consistent design system
+- Use responsive design principles
+- Follow accessibility guidelines
+- Keep styles organized and maintainable
+
+### Code Style
+
+- Use camelCase for variables and functions
+- Use PascalCase for components
+- Use descriptive names for files and components
+- Add JSDoc comments for complex functions
+- Keep functions small and focused
+
+### File Organization
+
+- Use Next.js App Router structure
+- Group related components in directories
+- Keep pages in app directory
+- Organize components by feature
+- Use consistent file naming
+
+### API Development
+
+- Use Next.js API routes for backend functionality
+- Implement proper error handling
+- Use environment variables for configuration
+- Add request validation
+- Implement proper CORS handling
+
+### SEO and Performance
+
+- Implement proper meta tags
+- Use Next.js Image optimization
+- Add structured data where appropriate
+- Optimize for Core Web Vitals
+- Implement proper sitemap generation
+
+### Testing
+
+- Write unit tests for components
+- Test API routes
+- Use React Testing Library
+- Maintain good test coverage
+- Test accessibility features
+
+## Project Structure
+
+```
+autowais/
+├── src/
+│   ├── app/                 # Next.js App Router pages
+│   ├── components/          # React components
+│   ├── data/               # Static data and content
+│   └── utils/              # Utility functions
+├── public/                 # Static assets
+├── package.json           # Dependencies
+├── tailwind.config.js     # Tailwind configuration
+├── next.config.js         # Next.js configuration
+└── vercel.json            # Vercel deployment config
+```
+
+## Deployment
+
+- Use Vercel for deployment
+- Configure environment variables
+- Set up proper domain and SSL
+- Monitor performance and errors
+- Implement proper CI/CD
+
+## Code Quality
+
+- Use ESLint for code linting
+- Use Prettier for formatting
+- Maintain good test coverage
+- Follow accessibility guidelines
+- Document complex functionality

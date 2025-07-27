@@ -1,92 +1,57 @@
-# Power Plant - Multi-Project Workspace
+# Separated Projects Workspace
 
-Welcome to the Power Plant workspace! This is now a well-organized collection of related projects and tools for AI automation, content management, and platform development.
+This workspace contains three distinct projects, each with its own purpose and technology stack:
 
-## 🏗️ Project Structure
+## Projects
 
-### [01-Autowais-Platform](./01-Autowais-Platform/)
+### 1. Power Plant
 
-Complete Autowais platform with frontend, backend, and deployment configurations.
+**Location**: `./power-plant/`
+**Purpose**: N8N workflows and automation platform
+**Technology**: N8N, JavaScript, JSON workflows
+**Focus**: Business process automation, AI agents, workflow management
 
-- **Frontend**: React/Next.js application
-- **Backend**: Node.js/Express API
-- **Website**: Marketing and landing pages
-- **Deployment**: Production configurations
+### 2. Figma-Context-MCP
 
-### [02-LinkedIn-Integration](./02-LinkedIn-Integration/)
+**Location**: `./figma-context-mcp/`
+**Purpose**: Figma API integration and design context management
+**Technology**: TypeScript, Node.js, Jest
+**Focus**: Figma API integration, design tools, TypeScript development
 
-LinkedIn API integration tools and automated posting system.
+### 3. Autowais
 
-- **API Scripts**: Core LinkedIn API handlers
-- **OAuth Tools**: Authentication and token management
-- **Posting Tools**: Automated content posting
-- **Testing Tools**: Validation and debugging utilities
+**Location**: `./autowais/`
+**Purpose**: Business website for Autowais
+**Technology**: Next.js, TypeScript, Tailwind CSS, React
+**Focus**: Modern web development, SEO, professional business website
 
-### [03-N8N-Workflows-Agents](./03-N8N-Workflows-Agents/)
+## Workspace Setup
 
-N8N automation workflows and AI agent configurations.
+Each project has its own:
 
-- **Workflows**: Business process automation
-- **Agent Configs**: AI agent setup files
-- **Tools**: Workflow management utilities
-- **Documentation**: Setup and usage guides
+- `.cursorrules` file with project-specific guidelines
+- `README.md` with project documentation
+- Technology-specific configuration files
+- Independent development workflows
 
-### [04-Content-Knowledge-Management](./04-Content-Knowledge-Management/)
+## Development
 
-Content creation and knowledge management assets.
+1. Open the workspace in VS Code/Cursor
+2. Navigate to the specific project you want to work on
+3. Follow the project-specific guidelines in each `.cursorrules` file
+4. Each project can be developed independently
 
-- **Living Systems Intelligence**: LSI framework and documentation
-- **AI Agents Content**: Educational materials and presentations
-- **Blog Content**: Articles and social media content
-- **Prompts & Templates**: Reusable AI prompts
+## Project Independence
 
-### [05-Infrastructure-Deployment](./05-Infrastructure-Deployment/)
+- Each project has its own Git repository
+- Separate dependency management
+- Independent deployment processes
+- Project-specific development guidelines
+- Clear separation of concerns
 
-Deployment configurations and infrastructure management.
+## Getting Started
 
-- **Docker**: Container configurations
-- **Scripts**: Deployment and maintenance automation
-- **Configurations**: Environment and service settings
-- **Environments**: Environment variable management
-
-### [06-Archive-Legacy](./06-Archive-Legacy/)
-
-Archived files and legacy code for reference.
-
-## 🚀 Quick Start
-
-1. Navigate to the project you want to work on
-2. Follow the README in each project directory
-3. Each project is self-contained with its own dependencies
-4. Use the workspace configuration files for multi-project development
-
-## 🛠️ Development
-
-Each project can be developed independently or as part of the integrated platform. The workspace is configured for:
-
-- **VS Code/Cursor**: Multi-root workspace support
-- **Git**: Individual project repositories or monorepo structure
-- **Docker**: Containerized deployment options
-- **N8N**: Workflow automation integration
-
-## 📁 Workspace Configuration
-
-This workspace includes configuration files for popular IDEs:
-
-- `.vscode/settings.json` - VS Code workspace settings
-- `cursor-*.json` - Cursor IDE configurations
-- Each project has its own `package.json` and dependencies
-
-## 🔗 Integration
-
-The projects are designed to work together:
-
-- Autowais Platform provides the core application
-- LinkedIn Integration handles social media automation
-- N8N Workflows orchestrate business processes
-- Content Management feeds the automation systems
-- Infrastructure handles deployment and scaling
-
-## 📖 Documentation
-
-Detailed documentation is available in each project directory. Start with the README files in each numbered folder to understand the specific project requirements and setup procedures.
+1. Open `separated-projects.code-workspace` in VS Code/Cursor
+2. Choose the project you want to work on
+3. Follow the project-specific README and `.cursorrules`
+4. Develop according to the project's technology stack and guidelines
