@@ -20,7 +20,7 @@
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "autoprefixer": "latest",
-    "axios": "^1.10.0",
+    "axios": "^1.11.0",
     "dotenv": "^17.2.0",
     "eslint": "latest",
     "eslint-config-next": "latest",
